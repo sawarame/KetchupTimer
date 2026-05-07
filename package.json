@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "rimraf ./KetchupTimer/js && rimraf KetchupTimer.zip && npx webpack && (cd KetchupTimer && zip -r ../KetchupTimer.zip .)",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,6 +21,7 @@
   "homepage": "https://github.com/sawarame/KetchupTimer#readme",
   "devDependencies": {
     "@types/chrome": "^0.1.42",
+    "rimraf": "^6.1.3",
     "sharp": "^0.34.5",
     "ts-loader": "^9.5.7",
     "typescript": "^6.0.3",
