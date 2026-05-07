@@ -90,6 +90,19 @@ async function updateDisplay(state: TimerState) {
   longBreakTimeInput.disabled = isNotStopped;
   cyclesInput.disabled = isNotStopped;
   saveBtn.disabled = isNotStopped;
+
+  if (state.state === 'stopped') {
+    startBtn.style.display = '';
+    startBtn.textContent = 'Start';
+    pauseBtn.style.display = 'none';
+  } else if (state.state === 'running') {
+    startBtn.style.display = 'none';
+    pauseBtn.style.display = '';
+  } else if (state.state === 'paused') {
+    startBtn.style.display = '';
+    startBtn.textContent = 'Resume';
+    pauseBtn.style.display = 'none';
+  }
 }
 
 async function init() {
@@ -110,6 +123,7 @@ async function init() {
       // Notify background to start alarm
       chrome.runtime.sendMessage({ action: 'startAlarm', endTime: currentState.endTime }).catch(() => {});
       
+      await updateDisplay(currentState);
       startDisplayLoop();
     }
   });

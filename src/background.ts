@@ -126,12 +126,14 @@ async function updateIcon() {
   
   let ratio = 1.0; // 1.0 means full ketchup
 
-  if (state.state === 'running') {
+  if (state.state === 'running' || state.state === 'paused') {
     const totalMs = state.phase === 'focus' ? state.settings.focus * 60 * 1000 
                   : state.phase === 'break' ? state.settings.break * 60 * 1000 
                   : state.settings.longBreak * 60 * 1000;
                   
-    const remainingMs = Math.max(0, state.endTime - Date.now());
+    const remainingMs = state.state === 'running'
+      ? Math.max(0, state.endTime - Date.now())
+      : state.remainingTime;
     
     if (state.phase === 'focus') {
       ratio = remainingMs / totalMs; // Decrease during focus
@@ -149,10 +151,10 @@ async function updateIcon() {
   // Ensure ratio is between 0 and 1
   ratio = Math.max(0, Math.min(1, ratio));
 
-  await drawIcon(ratio);
+  await drawIcon(ratio, state.phase === 'focus' && (state.state === 'running' || state.state === 'paused'));
 }
 
-async function drawIcon(ratio: number) {
+async function drawIcon(ratio: number, inverted: boolean = false) {
   const canvas = new OffscreenCanvas(16, 16);
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -163,6 +165,9 @@ async function drawIcon(ratio: number) {
   ctx.save();
   ctx.translate(8, 8); 
   ctx.scale(1.05, 1.05);
+  if (inverted) {
+    ctx.rotate(Math.PI);
+  }
   ctx.translate(-8, -8);
 
   // Bottle Body Path
@@ -176,14 +181,20 @@ async function drawIcon(ratio: number) {
   ctx.save();
   ctx.clip(path);
   const fillHeight = 11.5 * ratio;
-  const fillY = 15.5 - fillHeight;
   
   const liquidGrad = ctx.createLinearGradient(0, 0, 16, 0);
   liquidGrad.addColorStop(0, '#ff8585');
   liquidGrad.addColorStop(1, '#ff4d4d');
-  
   ctx.fillStyle = liquidGrad;
-  ctx.fillRect(0, fillY, 16, 12);
+
+  if (inverted) {
+    // Fill from near the cap (y=4) downwards in rotated space (which is upwards on screen)
+    ctx.fillRect(0, 4, 16, fillHeight);
+  } else {
+    // Fill from bottom (y=15.5) upwards
+    const fillY = 15.5 - fillHeight;
+    ctx.fillRect(0, fillY, 16, 12);
+  }
   ctx.restore();
 
   // Draw Cap (flat)
