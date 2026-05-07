@@ -83,6 +83,13 @@ async function updateDisplay(state: TimerState) {
   breakTimeInput.value = state.settings.break.toString();
   longBreakTimeInput.value = state.settings.longBreak.toString();
   cyclesInput.value = state.settings.cycles.toString();
+
+  const isNotStopped = state.state !== 'stopped';
+  focusTimeInput.disabled = isNotStopped;
+  breakTimeInput.disabled = isNotStopped;
+  longBreakTimeInput.disabled = isNotStopped;
+  cyclesInput.disabled = isNotStopped;
+  saveBtn.disabled = isNotStopped;
 }
 
 async function init() {
