@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Ketchup Timer</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Ketchup Timer</h1>
+    </div>
+    <div class="timer-display" id="timerDisplay">25:00</div>
+    <div class="phase-display" id="phaseDisplay">Focus</div>
+    <div class="controls">
+      <button id="startBtn">Start</button>
+      <button id="pauseBtn">Pause</button>
+      <button id="resetBtn">Reset</button>
+    </div>
+    
+    <div class="settings">
+      <label>
+        Focus (min):
+        <input type="number" id="focusTime" value="25" min="1" max="60">
+      </label>
+      <label>
+        Break (min):
+        <input type="number" id="breakTime" value="5" min="1" max="60">
+      </label>
+      <label>
+        Long Break (min):
+        <input type="number" id="longBreakTime" value="15" min="1" max="60">
+      </label>
+      <label>
+        Cycles before Long Break:
+        <input type="number" id="cycles" value="4" min="1" max="10">
+      </label>
+      <button id="saveBtn">Save Settings</button>
+    </div>
+  </div>
+  <script src="js/popup.js"></script>
+</body>
+</html>

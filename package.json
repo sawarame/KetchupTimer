@@ -1,0 +1,29 @@
+{
+  "name": "ketchuptimer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sawarame/KetchupTimer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/sawarame/KetchupTimer/issues"
+  },
+  "homepage": "https://github.com/sawarame/KetchupTimer#readme",
+  "devDependencies": {
+    "@types/chrome": "^0.1.42",
+    "sharp": "^0.34.5",
+    "ts-loader": "^9.5.7",
+    "typescript": "^6.0.3",
+    "webpack": "^5.106.2",
+    "webpack-cli": "^7.0.2"
+  }
+}
