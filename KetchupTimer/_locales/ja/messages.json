@@ -1,0 +1,10 @@
+{
+  "extensionName": {
+    "message": "KetchupTimer（ケチャップタイマー）",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "ケチャップボトルをモチーフにしたポモドーロタイマーです。",
+    "description": "Description of the extension"
+  }
+}

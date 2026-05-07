@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Ketchup Timer",
+  "name": "__MSG_extensionName__",
   "version": "1.0.0",
-  "description": "A Pomodoro timer with a ketchup bottle concept.",
+  "description": "__MSG_extensionDescription__",
+  "default_locale": "en",
   "permissions": [
     "alarms",
     "notifications",

@@ -1,0 +1,10 @@
+{
+  "extensionName": {
+    "message": "Ketchup Timer",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "A Pomodoro timer with a ketchup bottle concept.",
+    "description": "Description of the extension"
+  }
+}
