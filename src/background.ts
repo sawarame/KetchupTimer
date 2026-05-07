@@ -159,39 +159,41 @@ async function drawIcon(ratio: number) {
 
   ctx.clearRect(0, 0, 16, 16);
 
-  // Draw bottle silhouette (white/gray border)
-  ctx.strokeStyle = '#e0e0e0';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  // Simplified path for 16x16 icon
-  // top cap
-  ctx.fillStyle = '#ffd700';
-  ctx.fillRect(6, 1, 4, 3);
-  
-  // bottle body
-  ctx.beginPath();
-  ctx.moveTo(7, 4);
-  ctx.lineTo(9, 4);
-  ctx.lineTo(13, 8);
-  ctx.lineTo(13, 15);
-  ctx.lineTo(3, 15);
-  ctx.lineTo(3, 8);
-  ctx.closePath();
-  
-  // clipping region for liquid
+  // Draw Bottle (Maximized)
   ctx.save();
-  ctx.clip();
+  ctx.translate(8, 8); 
+  ctx.scale(1.05, 1.05);
+  ctx.translate(-8, -8);
+
+  // Bottle Body Path
+  const path = new Path2D('M 5.5 6 C 5.5 6, 4 7.5, 4 10 C 4 12.5, 4 14.5, 4 14.5 C 4 15, 4.5 15.5, 5 15.5 L 11 15.5 C 11.5 15.5, 12 15, 12 14.5 C 12 14.5, 12 12.5, 12 10 C 12 7.5, 10.5 6, 10.5 6 L 9.5 4 L 6.5 4 Z');
   
-  // draw liquid
-  const fillHeight = Math.floor(11 * ratio); // max height of liquid is roughly 11px
-  const fillY = 15 - fillHeight;
+  // Bottle interior background (white)
+  ctx.fillStyle = '#ffffff';
+  ctx.fill(path);
+
+  // Draw liquid with gradient highlight
+  ctx.save();
+  ctx.clip(path);
+  const fillHeight = 11.5 * ratio;
+  const fillY = 15.5 - fillHeight;
   
-  ctx.fillStyle = '#ff4d4d';
-  ctx.fillRect(2, fillY, 12, 11);
+  const liquidGrad = ctx.createLinearGradient(0, 0, 16, 0);
+  liquidGrad.addColorStop(0, '#ff8585');
+  liquidGrad.addColorStop(1, '#ff4d4d');
+  
+  ctx.fillStyle = liquidGrad;
+  ctx.fillRect(0, fillY, 16, 12);
   ctx.restore();
+
+  // Draw Cap (flat)
+  ctx.fillStyle = '#ffd700';
   
-  // draw bottle border again over liquid
-  ctx.stroke();
+  // Cap parts
+  ctx.fillRect(6.25, 2, 3.5, 2);
+  ctx.fillRect(7, 0.5, 2, 1.5);
+
+  ctx.restore();
 
   const imageData = ctx.getImageData(0, 0, 16, 16);
   chrome.action.setIcon({ imageData });
