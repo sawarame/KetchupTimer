@@ -22,6 +22,8 @@ rad.json
 #Test results file
 TestResults.xml
 
+.DS_Store
+
 /plans
 /node_modules
 /KetchupTimer/js
