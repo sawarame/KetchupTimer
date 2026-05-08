@@ -3,6 +3,7 @@ const path = require('path');
 const sharp = require('sharp');
 
 const svgPath = path.join(__dirname, '../src/icon.svg');
+const emptySvgPath = path.join(__dirname, '../src/icon-empty.svg');
 const outDir = path.join(__dirname, '../KetchupTimer/images');
 
 if (!fs.existsSync(outDir)) {
@@ -18,6 +19,12 @@ async function generateIcons() {
       .png()
       .toFile(path.join(outDir, `icon-${size}.png`));
     console.log(`Generated icon-${size}.png`);
+
+    await sharp(emptySvgPath)
+      .resize(size, size)
+      .png()
+      .toFile(path.join(outDir, `icon-empty-${size}.png`));
+    console.log(`Generated icon-empty-${size}.png`);
   }
 }
 

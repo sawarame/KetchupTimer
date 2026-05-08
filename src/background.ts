@@ -50,6 +50,7 @@ async function handlePhaseEnd() {
   
   let notificationTitle = '';
   let notificationMessage = '';
+  let notificationIcon = 'images/icon-128.png';
 
   if (state.phase === 'focus') {
     state.cycle += 1;
@@ -58,11 +59,13 @@ async function handlePhaseEnd() {
       state.remainingTime = state.settings.longBreak * 60 * 1000;
       notificationTitle = 'Focus Complete!';
       notificationMessage = 'Time for a long break. Ketchup bottle is refilling...';
+      notificationIcon = 'images/icon-empty-128.png';
     } else {
       state.phase = 'break';
       state.remainingTime = state.settings.break * 60 * 1000;
       notificationTitle = 'Focus Complete!';
       notificationMessage = 'Take a short break. Ketchup bottle is refilling...';
+      notificationIcon = 'images/icon-empty-128.png';
     }
   } else {
     // Break finished
@@ -74,6 +77,7 @@ async function handlePhaseEnd() {
     }
     notificationTitle = 'Break Complete!';
     notificationMessage = 'Ready to focus? The ketchup is full!';
+    notificationIcon = 'images/icon-128.png';
   }
 
   await chrome.storage.local.set({ timerState: state });
@@ -82,7 +86,7 @@ async function handlePhaseEnd() {
     '',
     {
       type: 'basic',
-      iconUrl: chrome.runtime.getURL('images/icon-128.png'),
+      iconUrl: chrome.runtime.getURL(notificationIcon),
       title: notificationTitle,
       message: notificationMessage,
       buttons: [{ title: 'OK - Start Next Phase' }],
