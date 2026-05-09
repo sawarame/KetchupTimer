@@ -38,7 +38,6 @@ const focusTimeInput = document.getElementById('focusTime') as HTMLInputElement;
 const breakTimeInput = document.getElementById('breakTime') as HTMLInputElement;
 const longBreakTimeInput = document.getElementById('longBreakTime') as HTMLInputElement;
 const cyclesInput = document.getElementById('cycles') as HTMLInputElement;
-const saveBtn = document.getElementById('saveBtn') as HTMLButtonElement;
 
 function formatTime(ms: number): string {
   if (ms < 0) ms = 0;
@@ -89,7 +88,6 @@ async function updateDisplay(state: TimerState) {
   breakTimeInput.disabled = isNotStopped;
   longBreakTimeInput.disabled = isNotStopped;
   cyclesInput.disabled = isNotStopped;
-  saveBtn.disabled = isNotStopped;
 
   if (state.state === 'stopped') {
     startBtn.style.display = '';
@@ -154,12 +152,12 @@ async function init() {
     await updateDisplay(currentState);
   });
 
-  saveBtn.addEventListener('click', async () => {
+  const saveSettings = async () => {
     const currentState = await getState();
-    currentState.settings.focus = parseInt(focusTimeInput.value, 10);
-    currentState.settings.break = parseInt(breakTimeInput.value, 10);
-    currentState.settings.longBreak = parseInt(longBreakTimeInput.value, 10);
-    currentState.settings.cycles = parseInt(cyclesInput.value, 10);
+    currentState.settings.focus = parseInt(focusTimeInput.value, 10) || defaultSettings.focus;
+    currentState.settings.break = parseInt(breakTimeInput.value, 10) || defaultSettings.break;
+    currentState.settings.longBreak = parseInt(longBreakTimeInput.value, 10) || defaultSettings.longBreak;
+    currentState.settings.cycles = parseInt(cyclesInput.value, 10) || defaultSettings.cycles;
     
     if (currentState.state === 'stopped') {
       if (currentState.phase === 'focus') currentState.remainingTime = currentState.settings.focus * 60 * 1000;
@@ -169,7 +167,12 @@ async function init() {
     
     await saveState(currentState);
     await updateDisplay(currentState);
-  });
+  };
+
+  focusTimeInput.addEventListener('input', saveSettings);
+  breakTimeInput.addEventListener('input', saveSettings);
+  longBreakTimeInput.addEventListener('input', saveSettings);
+  cyclesInput.addEventListener('input', saveSettings);
 }
 
 function startDisplayLoop() {
