@@ -42,23 +42,62 @@ body {
   margin-bottom: 24px;
 }
 
+.controls button {
+  width: 80px;
+  padding: 8px 0;
+  text-align: center;
+}
+
 button {
-  background-color: #ff4d4d;
   color: white;
   border: none;
   border-radius: 4px;
   padding: 8px 16px;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: opacity 0.2s, background-color 0.2s;
 }
 
-button:hover {
-  background-color: #e60000;
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-button:active {
-  background-color: #cc0000;
+#startBtn {
+  background-color: #28a745; /* Green */
+}
+
+#startBtn:hover {
+  background-color: #218838;
+}
+
+#startBtn:active {
+  background-color: #1e7e34;
+}
+
+#pauseBtn {
+  background-color: #ffc107; /* Yellow/Orange */
+  color: #333;
+}
+
+#pauseBtn:hover {
+  background-color: #e0a800;
+}
+
+#pauseBtn:active {
+  background-color: #d39e00;
+}
+
+#resetBtn {
+  background-color: #dc3545; /* Red */
+}
+
+#resetBtn:hover {
+  background-color: #c82333;
+}
+
+#resetBtn:active {
+  background-color: #bd2130;
 }
 
 .settings {
@@ -82,13 +121,4 @@ button:active {
   padding: 4px;
   border: 1px solid #ccc;
   border-radius: 4px;
-}
-
-#saveBtn {
-  margin-top: 8px;
-  background-color: #333;
-}
-
-#saveBtn:hover {
-  background-color: #555;
 }
