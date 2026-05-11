@@ -23,7 +23,7 @@ const ICON_UPDATE_ALARM = 'ketchupIconUpdate';
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'startAlarm') {
     chrome.alarms.create(ALARM_NAME, { when: message.endTime });
-    chrome.alarms.create(ICON_UPDATE_ALARM, { periodInMinutes: 0.1 }); // Update icon every 6 seconds
+    chrome.alarms.create(ICON_UPDATE_ALARM, { periodInMinutes: 1 / 60 }); // Update icon every second
     updateIcon();
   } else if (message.action === 'clearAlarm') {
     chrome.alarms.clear(ALARM_NAME);
@@ -116,7 +116,7 @@ chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIn
     
     await chrome.storage.local.set({ timerState: state });
     chrome.alarms.create(ALARM_NAME, { when: state.endTime });
-    chrome.alarms.create(ICON_UPDATE_ALARM, { periodInMinutes: 0.1 });
+    chrome.alarms.create(ICON_UPDATE_ALARM, { periodInMinutes: 1 / 60 });
     chrome.runtime.sendMessage({ action: 'stateUpdated' }).catch(() => {});
     await updateIcon();
   }
@@ -155,15 +155,31 @@ async function updateIcon() {
   // Ensure ratio is between 0 and 1
   ratio = Math.max(0, Math.min(1, ratio));
 
-  await drawIcon(ratio, state.phase === 'focus' && (state.state === 'running' || state.state === 'paused'));
+  const inverted = state.phase === 'focus' && (state.state === 'running' || state.state === 'paused');
+  
+  const imageData16 = renderIcon(ratio, 16, inverted);
+  const imageData32 = renderIcon(ratio, 32, inverted);
+
+  if (imageData16 && imageData32) {
+    chrome.action.setIcon({
+      imageData: {
+        "16": imageData16,
+        "32": imageData32
+      }
+    });
+  }
 }
 
-async function drawIcon(ratio: number, inverted: boolean = false) {
-  const canvas = new OffscreenCanvas(16, 16);
+function renderIcon(ratio: number, size: number, inverted: boolean = false): ImageData | null {
+  const canvas = new OffscreenCanvas(size, size);
   const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+  if (!ctx) return null;
 
-  ctx.clearRect(0, 0, 16, 16);
+  ctx.clearRect(0, 0, size, size);
+  
+  // Scale for higher resolutions
+  const s = size / 16;
+  ctx.scale(s, s);
 
   // Draw Bottle (Maximized)
   ctx.save();
@@ -210,8 +226,7 @@ async function drawIcon(ratio: number, inverted: boolean = false) {
 
   ctx.restore();
 
-  const imageData = ctx.getImageData(0, 0, 16, 16);
-  chrome.action.setIcon({ imageData });
+  return ctx.getImageData(0, 0, size, size);
 }
 
 // Initial icon setup
