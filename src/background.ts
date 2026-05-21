@@ -157,8 +157,10 @@ async function updateIcon() {
 
   const inverted = state.phase === 'focus' && (state.state === 'running' || state.state === 'paused');
   
-  const imageData16 = renderIcon(ratio, 16, inverted);
-  const imageData32 = renderIcon(ratio, 32, inverted);
+  const isAnimating = (state.phase === 'focus' || state.phase === 'break' || state.phase === 'longBreak') && state.state === 'running';
+  
+  const imageData16 = renderIcon(ratio, 16, inverted, isAnimating);
+  const imageData32 = renderIcon(ratio, 32, inverted, isAnimating);
 
   if (imageData16 && imageData32) {
     chrome.action.setIcon({
@@ -170,7 +172,7 @@ async function updateIcon() {
   }
 }
 
-function renderIcon(ratio: number, size: number, inverted: boolean = false): ImageData | null {
+function renderIcon(ratio: number, size: number, inverted: boolean = false, isAnimating: boolean = false): ImageData | null {
   const canvas = new OffscreenCanvas(size, size);
   const ctx = canvas.getContext('2d');
   if (!ctx) return null;
@@ -181,13 +183,19 @@ function renderIcon(ratio: number, size: number, inverted: boolean = false): Ima
   const s = size / 16;
   ctx.scale(s, s);
 
-  // Draw Bottle (Maximized)
+  // Draw Bottle
   ctx.save();
   ctx.translate(8, 8); 
-  ctx.scale(1.05, 1.05);
+  
   if (inverted) {
     ctx.rotate(Math.PI);
+    // Shift bottle "up" on screen (positive Y in rotated space) to make room for droplets
+    if (isAnimating) {
+      ctx.translate(0, 3);
+    }
   }
+  
+  ctx.scale(1.05, 1.05);
   ctx.translate(-8, -8);
 
   // Bottle Body Path
@@ -200,7 +208,17 @@ function renderIcon(ratio: number, size: number, inverted: boolean = false): Ima
   // Draw liquid with gradient highlight
   ctx.save();
   ctx.clip(path);
-  const fillHeight = 11.5 * ratio;
+  
+  const time = Date.now();
+  let currentRatio = ratio;
+  
+  // Surface wave animation
+  if (isAnimating && !inverted) {
+    const wave = Math.sin(time / 200) * 0.02;
+    currentRatio = Math.max(0, Math.min(1, ratio + wave));
+  }
+
+  const fillHeight = 11.5 * currentRatio;
   
   const liquidGrad = ctx.createLinearGradient(0, 0, 16, 0);
   liquidGrad.addColorStop(0, '#ff8585');
@@ -214,6 +232,30 @@ function renderIcon(ratio: number, size: number, inverted: boolean = false): Ima
     // Fill from bottom (y=15.5) upwards
     const fillY = 15.5 - fillHeight;
     ctx.fillRect(0, fillY, 16, 12);
+    
+    // Infilling animation (falling droplets)
+    if (isAnimating && ratio < 0.98) {
+      ctx.fillStyle = '#ff4d4d';
+      const cycle = 1200;
+      const progress = (time % cycle) / cycle;
+      
+      // Drop 1
+      const d1y = -2 + (progress * (fillY + 2)); 
+      if (d1y < fillY) {
+        ctx.beginPath();
+        ctx.arc(8, d1y, 0.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      // Drop 2 (offset)
+      const d2progress = (progress + 0.5) % 1.0;
+      const d2y = -2 + (d2progress * (fillY + 2));
+      if (d2y < fillY) {
+        ctx.beginPath();
+        ctx.arc(8, d2y, 0.6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
   }
   ctx.restore();
 
@@ -223,6 +265,32 @@ function renderIcon(ratio: number, size: number, inverted: boolean = false): Ima
   // Cap parts
   ctx.fillRect(6.25, 2, 3.5, 2);
   ctx.fillRect(7, 0.5, 2, 1.5);
+
+  // Droplet Animation
+  if (isAnimating) {
+    const time = Date.now();
+    const cycle = 1300; // 1.3 seconds cycle to avoid sync issues with 1s updates
+    const progress = (time % cycle) / cycle;
+    
+    ctx.fillStyle = '#ff4d4d'; // Ketchup Red
+    
+    // Drop 1
+    const d1y = 0.5 - (progress * 7); // Move from cap tip (0.5) "down" (towards -6.5 in local Y)
+    if (d1y < 0.4 && d1y > -6.5) {
+      ctx.beginPath();
+      ctx.arc(8, d1y, 0.9, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    // Drop 2 (offset)
+    const d2progress = (progress + 0.5) % 1.0;
+    const d2y = 0.5 - (d2progress * 7);
+    if (d2y < 0.4 && d2y > -6.5) {
+      ctx.beginPath();
+      ctx.arc(8, d2y, 0.7, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
 
   ctx.restore();
 
