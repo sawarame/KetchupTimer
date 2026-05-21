@@ -1,9 +1,10 @@
 ---
-name: design
-description: KetchupTimerのデザイン原則とCSSガイドラインを提供するスキル。
+project: KetchupTimer
+topic: Design & CSS Guidelines
+status: active
 ---
 
-# Design & CSS Skill
+# Design & CSS
 
 ## ケチャップ・テーマ
 
@@ -21,3 +22,6 @@ description: KetchupTimerのデザイン原則とCSSガイドラインを提供�
 
 - **最小操作:** 通知からのワンクリック遷移など、ユーザーの手間を減らす。
 - **フィードバック:** タイマーの状態をアイコンの液面変化で直感的に伝える。
+- **動的アイコン演出:**
+  - **Focus:** ボトルが反転し、キャップからケチャップが滴り落ちるアニメーションを表示。
+  - **Break/Long Break:** ボトルが正位置に戻り、上からケチャップが補充されるアニメーションを表示。

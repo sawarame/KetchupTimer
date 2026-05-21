@@ -1,9 +1,6 @@
----
-name: typescript
-description: TypeScriptに関するガイドラインとベストプラクティスを提供するスキル。
----
+# TypeScript コーディングガイドライン
 
-# TypeScript Skill
+このドキュメントは、KetchupTimerプロジェクトにおけるTypeScriptのコーディングガイドラインを提供します。これらのガイドラインは、コードの品質と一貫性を保ち、開発者が効率的に作業できるようにすることを目的としています。
 
 ## コーディング標準
 
