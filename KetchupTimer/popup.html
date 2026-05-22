@@ -13,7 +13,13 @@
     .tabs { display: flex; gap: 5px; margin-bottom: 10px; width: 100%; justify-content: center; }
     .tab-btn { padding: 4px 8px; font-size: 12px; border: 1px solid #ccc; background: #f0f0f0; color: #333; }
     .tab-btn.active { background: #ff4d4d; color: white; border-color: #ff4d4d; }
-  </style>
+    .stats-nav { display: flex; align-items: center; justify-content: space-between; margin: 10px 0; padding: 0 5px; width: 100%; }
+    .stats-nav button { background-color: #f0f0f0; color: #333; width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; border: 1px solid #ccc; cursor: pointer; }
+    .stats-nav button:hover:not(:disabled) { background-color: #e0e0e0; }
+    .stats-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+    #currentPeriodLabel { font-size: 13px; font-weight: bold; color: #555; flex-grow: 1; text-align: center; }
+    </style>
+
 </head>
 <body>
   <div class="container">
@@ -62,6 +68,11 @@
         <button class="tab-btn active" data-period="daily">Daily</button>
         <button class="tab-btn" data-period="weekly">Weekly</button>
         <button class="tab-btn" data-period="monthly">Monthly</button>
+      </div>
+      <div class="stats-nav">
+        <button id="prevPeriod">&lt;</button>
+        <span id="currentPeriodLabel"></span>
+        <button id="nextPeriod">&gt;</button>
       </div>
       <div class="chart-container">
         <canvas id="statsChart"></canvas>
