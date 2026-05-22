@@ -4,7 +4,7 @@
     "description": "Name of the extension"
   },
   "extensionDescription": {
-    "message": "ケチャップボトルをモチーフにしたポモドーロタイマー。集中するとケチャップが減り、休憩すると補充される視覚的な楽しさを提供。",
+    "message": "ケチャップボトルがモチーフのポモドーロタイマー。集中時間の集計機能と日間・週間・月間グラフで日々の成果を可視化！",
     "description": "Description of the extension"
   }
 }
