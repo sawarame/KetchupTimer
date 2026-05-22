@@ -1,7 +1,7 @@
 /// <reference types="chrome" />
 
-type Phase = 'focus' | 'break' | 'longBreak';
-type State = 'running' | 'paused' | 'stopped';
+export type Phase = 'focus' | 'break' | 'longBreak';
+export type State = 'running' | 'paused' | 'stopped';
 
 export interface TimerState {
   phase: Phase;
@@ -18,26 +18,29 @@ export interface TimerState {
 }
 
 const ALARM_NAME = 'ketchupTimerAlarm';
-const ICON_UPDATE_ALARM = 'ketchupIconUpdate';
+const OFFSCREEN_DOCUMENT_PATH = 'offscreen.html';
 
+let isCreatingOffscreen = false;
+
+// メッセージハンドラ
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'startAlarm') {
     chrome.alarms.create(ALARM_NAME, { when: message.endTime });
-    chrome.alarms.create(ICON_UPDATE_ALARM, { periodInMinutes: 1 / 60 }); // Update icon every second
     updateIcon();
   } else if (message.action === 'clearAlarm') {
     chrome.alarms.clear(ALARM_NAME);
-    chrome.alarms.clear(ICON_UPDATE_ALARM);
+    updateIcon();
+  } else if (message.action === 'heartbeat') {
+    // Offscreen からの心拍を受けて描画更新
+    updateIcon();
+  } else if (message.action === 'offscreenReady') {
     updateIcon();
   }
 });
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === ALARM_NAME) {
-    chrome.alarms.clear(ICON_UPDATE_ALARM);
     await handlePhaseEnd();
-  } else if (alarm.name === ICON_UPDATE_ALARM) {
-    await updateIcon();
   }
 });
 
@@ -68,7 +71,6 @@ async function handlePhaseEnd() {
       notificationIcon = 'images/icon-empty-128.png';
     }
   } else {
-    // Break finished
     const wasLongBreak = state.phase === 'longBreak';
     state.phase = 'focus';
     state.remainingTime = state.settings.focus * 60 * 1000;
@@ -82,24 +84,14 @@ async function handlePhaseEnd() {
 
   await chrome.storage.local.set({ timerState: state });
   
-  chrome.notifications.create(
-    '',
-    {
-      type: 'basic',
-      iconUrl: chrome.runtime.getURL(notificationIcon),
-      title: notificationTitle,
-      message: notificationMessage,
-      buttons: [{ title: 'OK - Start Next Phase' }],
-      requireInteraction: true
-    },
-    (notificationId) => {
-      if (chrome.runtime.lastError) {
-        console.error('Notification error:', chrome.runtime.lastError);
-      } else {
-        console.log('Notification shown:', notificationId);
-      }
-    }
-  );
+  chrome.notifications.create('', {
+    type: 'basic',
+    iconUrl: chrome.runtime.getURL(notificationIcon),
+    title: notificationTitle,
+    message: notificationMessage,
+    buttons: [{ title: 'OK - Start Next Phase' }],
+    requireInteraction: true
+  });
   
   chrome.runtime.sendMessage({ action: 'stateUpdated' }).catch(() => {});
   await updateIcon();
@@ -116,186 +108,146 @@ chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIn
     
     await chrome.storage.local.set({ timerState: state });
     chrome.alarms.create(ALARM_NAME, { when: state.endTime });
-    chrome.alarms.create(ICON_UPDATE_ALARM, { periodInMinutes: 1 / 60 });
     chrome.runtime.sendMessage({ action: 'stateUpdated' }).catch(() => {});
     await updateIcon();
   }
 });
 
-// Dynamic Icon Rendering Logic
+/**
+ * Offscreen Document を作成または取得します。
+ */
+async function setupOffscreenDocument() {
+  if (isCreatingOffscreen) return;
+  const existingContexts = await chrome.runtime.getContexts({
+    contextTypes: [chrome.runtime.ContextType.OFFSCREEN_DOCUMENT],
+    documentUrls: [chrome.runtime.getURL(OFFSCREEN_DOCUMENT_PATH)]
+  });
+  if (existingContexts.length > 0) return;
+
+  isCreatingOffscreen = true;
+  try {
+    await chrome.offscreen.createDocument({
+      url: OFFSCREEN_DOCUMENT_PATH,
+      reasons: [chrome.offscreen.Reason.DOM_SCRAPING],
+      justification: 'Keep Service Worker alive for smooth icon animations'
+    });
+  } catch (e) {
+    console.error(e);
+  } finally {
+    isCreatingOffscreen = false;
+  }
+}
+
+/**
+ * アイコンを描画して更新します。
+ */
 async function updateIcon() {
   const data = await chrome.storage.local.get('timerState');
   if (!data.timerState) return;
   const state = data.timerState as TimerState;
-  
-  let ratio = 1.0; // 1.0 means full ketchup
 
+  // タイマーが動いている時だけ Offscreen Document を確実に作成
+  if (state.state === 'running') {
+    await setupOffscreenDocument();
+  }
+
+  let ratio = 1.0;
   if (state.state === 'running' || state.state === 'paused') {
     const totalMs = state.phase === 'focus' ? state.settings.focus * 60 * 1000 
                   : state.phase === 'break' ? state.settings.break * 60 * 1000 
                   : state.settings.longBreak * 60 * 1000;
-                  
-    const remainingMs = state.state === 'running'
-      ? Math.max(0, state.endTime - Date.now())
-      : state.remainingTime;
-    
-    if (state.phase === 'focus') {
-      ratio = remainingMs / totalMs; // Decrease during focus
-    } else {
-      ratio = 1 - (remainingMs / totalMs); // Increase (refill) during break
-    }
+    const remainingMs = state.state === 'running' ? Math.max(0, state.endTime - Date.now()) : state.remainingTime;
+    ratio = (state.phase === 'focus') ? remainingMs / totalMs : 1 - (remainingMs / totalMs);
   } else {
-    if (state.phase === 'focus') {
-      ratio = 1.0;
-    } else {
-      ratio = 0.0;
-    }
+    ratio = (state.phase === 'focus') ? 1.0 : 0.0;
   }
-
-  // Ensure ratio is between 0 and 1
   ratio = Math.max(0, Math.min(1, ratio));
 
   const inverted = state.phase === 'focus' && (state.state === 'running' || state.state === 'paused');
+  const isAnimating = state.state === 'running';
   
-  const isAnimating = (state.phase === 'focus' || state.phase === 'break' || state.phase === 'longBreak') && state.state === 'running';
-  
-  const imageData16 = renderIcon(ratio, 16, inverted, isAnimating);
-  const imageData32 = renderIcon(ratio, 32, inverted, isAnimating);
+  const imageData16 = renderIconInSW(ratio, 16, inverted, isAnimating);
+  const imageData32 = renderIconInSW(ratio, 32, inverted, isAnimating);
 
   if (imageData16 && imageData32) {
     chrome.action.setIcon({
-      imageData: {
-        "16": imageData16,
-        "32": imageData32
-      }
+      imageData: { "16": imageData16, "32": imageData32 }
     });
   }
 }
 
-function renderIcon(ratio: number, size: number, inverted: boolean = false, isAnimating: boolean = false): ImageData | null {
+/**
+ * Service Worker 内で OffscreenCanvas を使って描画します。
+ */
+function renderIconInSW(ratio: number, size: number, inverted: boolean = false, isAnimating: boolean = false): ImageData | null {
   const canvas = new OffscreenCanvas(size, size);
   const ctx = canvas.getContext('2d');
   if (!ctx) return null;
 
   ctx.clearRect(0, 0, size, size);
-  
-  // Scale for higher resolutions
   const s = size / 16;
   ctx.scale(s, s);
-
-  // Draw Bottle
   ctx.save();
   ctx.translate(8, 8); 
-  
   if (inverted) {
     ctx.rotate(Math.PI);
-    // Shift bottle "up" on screen (positive Y in rotated space) to make room for droplets
-    if (isAnimating) {
-      ctx.translate(0, 3);
-    }
+    if (isAnimating) ctx.translate(0, 3);
   }
-  
   ctx.scale(1.05, 1.05);
   ctx.translate(-8, -8);
 
-  // Bottle Body Path
   const path = new Path2D('M 5.5 6 C 5.5 6, 4 7.5, 4 10 C 4 12.5, 4 14.5, 4 14.5 C 4 15, 4.5 15.5, 5 15.5 L 11 15.5 C 11.5 15.5, 12 15, 12 14.5 C 12 14.5, 12 12.5, 12 10 C 12 7.5, 10.5 6, 10.5 6 L 9.5 4 L 6.5 4 Z');
-  
-  // Bottle interior background (white)
   ctx.fillStyle = '#ffffff';
   ctx.fill(path);
 
-  // Draw liquid with gradient highlight
   ctx.save();
   ctx.clip(path);
-  
   const time = Date.now();
   let currentRatio = ratio;
-  
-  // Surface wave animation
   if (isAnimating && !inverted) {
     const wave = Math.sin(time / 200) * 0.02;
     currentRatio = Math.max(0, Math.min(1, ratio + wave));
   }
-
   const fillHeight = 11.5 * currentRatio;
-  
   const liquidGrad = ctx.createLinearGradient(0, 0, 16, 0);
   liquidGrad.addColorStop(0, '#ff8585');
   liquidGrad.addColorStop(1, '#ff4d4d');
   ctx.fillStyle = liquidGrad;
 
   if (inverted) {
-    // Fill from near the cap (y=4) downwards in rotated space (which is upwards on screen)
     ctx.fillRect(0, 4, 16, fillHeight);
   } else {
-    // Fill from bottom (y=15.5) upwards
     const fillY = 15.5 - fillHeight;
     ctx.fillRect(0, fillY, 16, 12);
-    
-    // Infilling animation (falling droplets)
     if (isAnimating && ratio < 0.98) {
       ctx.fillStyle = '#ff4d4d';
       const cycle = 1200;
       const progress = (time % cycle) / cycle;
-      
-      // Drop 1
       const d1y = -2 + (progress * (fillY + 2)); 
       if (d1y < fillY) {
-        ctx.beginPath();
-        ctx.arc(8, d1y, 0.8, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      
-      // Drop 2 (offset)
-      const d2progress = (progress + 0.5) % 1.0;
-      const d2y = -2 + (d2progress * (fillY + 2));
-      if (d2y < fillY) {
-        ctx.beginPath();
-        ctx.arc(8, d2y, 0.6, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath(); ctx.arc(8, d1y, 0.8, 0, Math.PI * 2); ctx.fill();
       }
     }
   }
   ctx.restore();
 
-  // Draw Cap (flat)
   ctx.fillStyle = '#ffd700';
-  
-  // Cap parts
   ctx.fillRect(6.25, 2, 3.5, 2);
   ctx.fillRect(7, 0.5, 2, 1.5);
 
-  // Droplet Animation
   if (isAnimating) {
-    const time = Date.now();
-    const cycle = 1300; // 1.3 seconds cycle to avoid sync issues with 1s updates
+    const cycle = 1300;
     const progress = (time % cycle) / cycle;
-    
-    ctx.fillStyle = '#ff4d4d'; // Ketchup Red
-    
-    // Drop 1
-    const d1y = 0.5 - (progress * 7); // Move from cap tip (0.5) "down" (towards -6.5 in local Y)
+    ctx.fillStyle = '#ff4d4d';
+    const d1y = 0.5 - (progress * 7);
     if (d1y < 0.4 && d1y > -6.5) {
-      ctx.beginPath();
-      ctx.arc(8, d1y, 0.9, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    
-    // Drop 2 (offset)
-    const d2progress = (progress + 0.5) % 1.0;
-    const d2y = 0.5 - (d2progress * 7);
-    if (d2y < 0.4 && d2y > -6.5) {
-      ctx.beginPath();
-      ctx.arc(8, d2y, 0.7, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(8, d1y, 0.9, 0, Math.PI * 2); ctx.fill();
     }
   }
-
   ctx.restore();
 
   return ctx.getImageData(0, 0, size, size);
 }
 
-// Initial icon setup
+// 初期化
 updateIcon();

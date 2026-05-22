@@ -4,7 +4,8 @@ module.exports = {
   mode: 'production',
   entry: {
     popup: './src/popup.ts',
-    background: './src/background.ts'
+    background: './src/background.ts',
+    offscreen: './src/offscreen.ts'
   },
   output: {
     path: path.resolve(__dirname, 'KetchupTimer/js'),

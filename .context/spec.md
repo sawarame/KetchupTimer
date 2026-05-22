@@ -20,6 +20,9 @@
 - **動的アイコン演出:**
   - タイマーの残り時間に応じて、ブラウザツールバーのアイコンを動的に更新。
   - ケチャップの液面が変化するようなアニメーションをプログラマティックに描画。
+  - **実装方式 (Heartbeat方式):** Manifest V3 の Service Worker 休止制限および Windows Chrome での描画制限を回避するため、Offscreen API を使用。
+    - **Offscreen Document:** 100msごとに「ハートビート（描画信号）」を Service Worker に送信し、Service Worker の稼働を維持。
+    - **Service Worker:** 信号を受信するたびに `OffscreenCanvas` を用いてアイコンを再描画し、`chrome.action.setIcon` を実行。
   - 集中（Focus）フェーズの実行中には、ボトルが反転し、キャップからケチャップが滴り落ちるアニメーションを表示。
   - 休憩（Break/Long Break）フェーズの実行中には、ボトルが正位置に戻り、上からケチャップのしずくが補充されるアニメーションを表示。
 
@@ -28,15 +31,17 @@
 /
 ├── src/                    # TypeScriptソースコード
 │   ├── popup.ts            # UI・設定管理ロジック
-│   ├── background.ts       # アラーム、通知、アイコン描画ロジック
+│   ├── background.ts       # アラーム、通知、アイコン描画主ロジック
+│   ├── offscreen.ts        # ハートビート送信ロジック (Offscreen Document用)
 │   └── icon.svg            # アイコンのマスターSVG
 ├── KetchupTimer/           # 配布用（ビルド済み）ディレクトリ
 │   ├── manifest.json       # 拡張機能のマニフェスト
 │   ├── popup.html          # ポップアップUI
 │   ├── popup.css           # ポップアップ用スタイル
-│   ├── js/                 # Webpackビルド出力先
+│   ├── offscreen.html      # ハートビート用非表示ドキュメント
+│   ├── js/                 # Webpackビルド出力先 (popup.js, background.js, offscreen.js)
 │   └── images/             # 生成された静的アイコンPNG
-├── scripts/                # ビルド等に使用するスクリプト
+```
 │   └── generate-icons.js   # SVGからPNGを生成するスクリプト
 ├── package.json            # 依存関係
 ├── tsconfig.json           # TypeScript設定
