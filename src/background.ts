@@ -250,8 +250,8 @@ function renderIconInSW(ratio: number, size: number, inverted: boolean = false, 
 async function recordFocusTime(minutes: number) {
   try {
     const now = new Date();
-    const offset = now.getTimezoneOffset() * 60000;
-    const today = (new Date(now.getTime() - offset)).toISOString().split('T')[0];
+    // ローカルタイムでの YYYY-MM-DD 形式を取得
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     
     const data = await chrome.storage.local.get('stats');
     const stats = (data.stats || {}) as { [key: string]: number };

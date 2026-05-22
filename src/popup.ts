@@ -119,12 +119,16 @@ async function updateChart(period: Period) {
   const labels: string[] = [];
   const values: number[] = [];
   const now = new Date();
+
+  const getLocalDateString = (date: Date) => {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  };
   
   if (period === 'daily') {
     for (let i = 6; i >= 0; i--) {
       const d = new Date();
       d.setDate(now.getDate() - i);
-      const dateStr = d.toISOString().split('T')[0];
+      const dateStr = getLocalDateString(d);
       labels.push(dateStr.slice(5)); // MM-DD
       values.push(stats[dateStr] || 0);
     }
@@ -134,12 +138,12 @@ async function updateChart(period: Period) {
       const d = new Date();
       d.setDate(now.getDate() - (i * 7));
       const day = d.getDay() || 7;
-      d.setHours(-24 * (day - 1));
-      const startStr = d.toISOString().split('T')[0];
+      d.setDate(d.getDate() - (day - 1));
+      const startStr = getLocalDateString(d);
       for (let j = 0; j < 7; j++) {
         const dd = new Date(d);
         dd.setDate(d.getDate() + j);
-        const ds = dd.toISOString().split('T')[0];
+        const ds = getLocalDateString(dd);
         weekSum += stats[ds] || 0;
       }
       labels.push(`${startStr.slice(5)} week`);
