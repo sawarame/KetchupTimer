@@ -47,3 +47,10 @@
 ├── tsconfig.json           # TypeScript設定
 └── webpack.config.js       # Webpack設定
 ```
+
+## 4. UI仕様 (UI Specification)
+- **Popup:**
+  - **メイン画面:** タイマー表示、フェーズ表示、操作ボタン、設定項目。
+  - **統計画面:** 期間切り替えタブ（Daily/Weekly/Monthly）、集中時間の棒グラフ、メイン画面への戻るボタン。
+- **Notification:**
+  - フェーズ終了の通知、次のフェーズ開始ボタン。

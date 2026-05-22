@@ -31,7 +31,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.alarms.clear(ALARM_NAME);
     updateIcon();
   } else if (message.action === 'heartbeat') {
-    // Offscreen からの心拍を受けて描画更新
     updateIcon();
   } else if (message.action === 'offscreenReady') {
     updateIcon();
@@ -44,6 +43,9 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   }
 });
 
+/**
+ * フェーズ終了時の処理
+ */
 async function handlePhaseEnd() {
   const data = await chrome.storage.local.get('timerState');
   if (!data.timerState) return;
@@ -57,6 +59,9 @@ async function handlePhaseEnd() {
 
   if (state.phase === 'focus') {
     state.cycle += 1;
+    // --- 集中時間の記録を追加 ---
+    await recordFocusTime(state.settings.focus);
+    
     if (state.cycle >= state.settings.cycles) {
       state.phase = 'longBreak';
       state.remainingTime = state.settings.longBreak * 60 * 1000;
@@ -113,9 +118,6 @@ chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIn
   }
 });
 
-/**
- * Offscreen Document を作成または取得します。
- */
 async function setupOffscreenDocument() {
   if (isCreatingOffscreen) return;
   const existingContexts = await chrome.runtime.getContexts({
@@ -138,15 +140,11 @@ async function setupOffscreenDocument() {
   }
 }
 
-/**
- * アイコンを描画して更新します。
- */
 async function updateIcon() {
   const data = await chrome.storage.local.get('timerState');
   if (!data.timerState) return;
   const state = data.timerState as TimerState;
 
-  // タイマーが動いている時だけ Offscreen Document を確実に作成
   if (state.state === 'running') {
     await setupOffscreenDocument();
   }
@@ -176,9 +174,6 @@ async function updateIcon() {
   }
 }
 
-/**
- * Service Worker 内で OffscreenCanvas を使って描画します。
- */
 function renderIconInSW(ratio: number, size: number, inverted: boolean = false, isAnimating: boolean = false): ImageData | null {
   const canvas = new OffscreenCanvas(size, size);
   const ctx = canvas.getContext('2d');
@@ -247,6 +242,26 @@ function renderIconInSW(ratio: number, size: number, inverted: boolean = false, 
   ctx.restore();
 
   return ctx.getImageData(0, 0, size, size);
+}
+
+/**
+ * 集中時間を記録します（分単位）。
+ */
+async function recordFocusTime(minutes: number) {
+  try {
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    const today = (new Date(now.getTime() - offset)).toISOString().split('T')[0];
+    
+    const data = await chrome.storage.local.get('stats');
+    const stats = (data.stats || {}) as { [key: string]: number };
+    
+    stats[today] = (stats[today] || 0) + minutes;
+    await chrome.storage.local.set({ stats });
+    console.log(`[Stats] Recorded ${minutes}min for ${today}. Total: ${stats[today]}min`);
+  } catch (e) {
+    console.error('[Stats Error] Failed to record focus time:', e);
+  }
 }
 
 // 初期化

@@ -1,7 +1,10 @@
 /// <reference types="chrome" />
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
 
 type Phase = 'focus' | 'break' | 'longBreak';
 type State = 'running' | 'paused' | 'stopped';
+type Period = 'daily' | 'weekly' | 'monthly';
 
 export interface TimerState {
   phase: Phase;
@@ -25,8 +28,11 @@ const defaultSettings = {
 };
 
 let displayInterval: number | null = null;
+let currentChart: Chart | null = null;
 
 // UI Elements
+const mainView = document.getElementById('mainView') as HTMLDivElement;
+const statsView = document.getElementById('statsView') as HTMLDivElement;
 const timerDisplay = document.getElementById('timerDisplay') as HTMLDivElement;
 const phaseDisplay = document.getElementById('phaseDisplay') as HTMLDivElement;
 const startBtn = document.getElementById('startBtn') as HTMLButtonElement;
@@ -103,6 +109,92 @@ async function updateDisplay(state: TimerState) {
   }
 }
 
+/**
+ * 統計グラフを更新します。
+ */
+async function updateChart(period: Period) {
+  const data = await chrome.storage.local.get('stats');
+  const stats = (data.stats || {}) as { [key: string]: number };
+  
+  const labels: string[] = [];
+  const values: number[] = [];
+  const now = new Date();
+  
+  if (period === 'daily') {
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(now.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      labels.push(dateStr.slice(5)); // MM-DD
+      values.push(stats[dateStr] || 0);
+    }
+  } else if (period === 'weekly') {
+    for (let i = 3; i >= 0; i--) {
+      let weekSum = 0;
+      const d = new Date();
+      d.setDate(now.getDate() - (i * 7));
+      const day = d.getDay() || 7;
+      d.setHours(-24 * (day - 1));
+      const startStr = d.toISOString().split('T')[0];
+      for (let j = 0; j < 7; j++) {
+        const dd = new Date(d);
+        dd.setDate(d.getDate() + j);
+        const ds = dd.toISOString().split('T')[0];
+        weekSum += stats[ds] || 0;
+      }
+      labels.push(`${startStr.slice(5)} week`);
+      values.push(weekSum);
+    }
+  } else if (period === 'monthly') {
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const year = d.getFullYear();
+      const month = d.getMonth();
+      const monthStr = `${year}-${(month + 1).toString().padStart(2, '0')}`;
+      let monthSum = 0;
+      Object.keys(stats).forEach(date => {
+        if (date.startsWith(monthStr)) monthSum += stats[date];
+      });
+      labels.push(monthStr);
+      values.push(monthSum);
+    }
+  }
+
+  const ctx = document.getElementById('statsChart') as HTMLCanvasElement;
+  if (currentChart) {
+    currentChart.destroy();
+  }
+
+  currentChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Focus Time (min)',
+        data: values,
+        backgroundColor: '#ff4d4d',
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { font: { size: 10 } }
+        },
+        x: {
+          ticks: { font: { size: 10 } }
+        }
+      },
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+}
+
 async function init() {
   const state = await getState();
   await updateDisplay(state);
@@ -117,10 +209,7 @@ async function init() {
       currentState.state = 'running';
       currentState.endTime = Date.now() + currentState.remainingTime;
       await saveState(currentState);
-      
-      // Notify background to start alarm
       chrome.runtime.sendMessage({ action: 'startAlarm', endTime: currentState.endTime }).catch(() => {});
-      
       await updateDisplay(currentState);
       startDisplayLoop();
     }
@@ -132,7 +221,6 @@ async function init() {
       currentState.state = 'paused';
       currentState.remainingTime = Math.max(0, currentState.endTime - Date.now());
       await saveState(currentState);
-      
       chrome.runtime.sendMessage({ action: 'clearAlarm' }).catch(() => {});
       stopDisplayLoop();
       await updateDisplay(currentState);
@@ -146,7 +234,6 @@ async function init() {
     currentState.cycle = 0;
     currentState.remainingTime = currentState.settings.focus * 60 * 1000;
     await saveState(currentState);
-    
     chrome.runtime.sendMessage({ action: 'clearAlarm' }).catch(() => {});
     stopDisplayLoop();
     await updateDisplay(currentState);
@@ -164,7 +251,6 @@ async function init() {
       else if (currentState.phase === 'break') currentState.remainingTime = currentState.settings.break * 60 * 1000;
       else if (currentState.phase === 'longBreak') currentState.remainingTime = currentState.settings.longBreak * 60 * 1000;
     }
-    
     await saveState(currentState);
     await updateDisplay(currentState);
   };
@@ -173,6 +259,28 @@ async function init() {
   breakTimeInput.addEventListener('input', saveSettings);
   longBreakTimeInput.addEventListener('input', saveSettings);
   cyclesInput.addEventListener('input', saveSettings);
+
+  // 画面遷移イベント
+  document.getElementById('viewStats')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    mainView.classList.remove('active');
+    statsView.classList.add('active');
+    updateChart('daily');
+  });
+
+  document.getElementById('backToTimer')?.addEventListener('click', () => {
+    statsView.classList.remove('active');
+    mainView.classList.add('active');
+  });
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const target = e.target as HTMLButtonElement;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      target.classList.add('active');
+      updateChart(target.dataset.period as Period);
+    });
+  });
 }
 
 function startDisplayLoop() {
