@@ -1,10 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-const sharp = require('sharp');
+const fs = require("fs");
+const path = require("path");
+const sharp = require("sharp");
 
-const svgPath = path.join(__dirname, '../src/icon.svg');
-const emptySvgPath = path.join(__dirname, '../src/icon-empty.svg');
-const outDir = path.join(__dirname, '../KetchupTimer/images');
+const svgPath = path.join(__dirname, "../src/icon.svg");
+const emptySvgPath = path.join(__dirname, "../src/icon-empty.svg");
+const outDir = path.join(__dirname, "../package/images");
 
 if (!fs.existsSync(outDir)) {
   fs.mkdirSync(outDir, { recursive: true });

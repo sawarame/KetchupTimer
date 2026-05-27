@@ -1,27 +1,27 @@
-const path = require('path');
+const path = require("path");
 
 module.exports = {
-  mode: 'production',
+  mode: "production",
   entry: {
-    popup: './src/popup.ts',
-    background: './src/background.ts',
-    offscreen: './src/offscreen.ts'
+    popup: "./src/popup.ts",
+    background: "./src/background.ts",
+    offscreen: "./src/offscreen.ts",
   },
   output: {
-    path: path.resolve(__dirname, 'KetchupTimer/js'),
-    filename: '[name].js',
-    clean: false
+    path: path.resolve(__dirname, "package/js"),
+    filename: "[name].js",
+    clean: false,
   },
   module: {
     rules: [
       {
         test: /\.ts$/,
-        use: 'ts-loader',
+        use: "ts-loader",
         exclude: /node_modules/,
       },
     ],
   },
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: [".ts", ".js"],
   },
 };

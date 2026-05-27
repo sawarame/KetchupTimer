@@ -1,10 +1,12 @@
 # Ketchup Timer - Project Specification
 
 ## 1. 概要 (Overview)
+
 「Ketchup Timer」は、ポモドーロ・テクニックを用いたブラウザ拡張機能（Manifest V3対応）です。
 最大のコンセプトは「ケチャップボトル」であり、作業中（Focus）はケチャップが減っていき、休憩中（Break）はケチャップが補充されていくというユニークな視覚的フィードバックを提供します。
 
 ## 2. 機能要件 (Features)
+
 - **タイマー機能:**
   - 集中（Focus）フェーズ：デフォルト25分
   - 短い休憩（Break）フェーズ：デフォルト5分
@@ -30,6 +32,7 @@
   - 休憩（Break/Long Break）フェーズの実行中には、ボトルが正位置に戻り、上からケチャップのしずくが補充されるアニメーションを表示。
 
 ## 3. ディレクトリ構成 (Directory Structure)
+
 ```
 /
 ├── src/                    # TypeScriptソースコード
@@ -37,21 +40,23 @@
 │   ├── background.ts       # アラーム、通知、アイコン描画主ロジック
 │   ├── offscreen.ts        # ハートビート送信ロジック (Offscreen Document用)
 │   └── icon.svg            # アイコンのマスターSVG
-├── KetchupTimer/           # 配布用（ビルド済み）ディレクトリ
+├── package/                # 配布用（ビルド済み）ディレクトリ
 │   ├── manifest.json       # 拡張機能のマニフェスト
 │   ├── popup.html          # ポップアップUI
 │   ├── popup.css           # ポップアップ用スタイル
 │   ├── offscreen.html      # ハートビート用非表示ドキュメント
 │   ├── js/                 # Webpackビルド出力先 (popup.js, background.js, offscreen.js)
 │   └── images/             # 生成された静的アイコンPNG
-```
+├── scripts/                # 各種スクリプト
 │   └── generate-icons.js   # SVGからPNGを生成するスクリプト
-├── package.json            # 依存関係
-├── tsconfig.json           # TypeScript設定
-└── webpack.config.js       # Webpack設定
+├── package.json # 依存関係
+├── tsconfig.json # TypeScript設定
+└── webpack.config.js # Webpack設定
+
 ```
 
 ## 4. UI仕様 (UI Specification)
+
 - **Popup:**
   - **メイン画面:** タイマー表示、フェーズ表示、操作ボタン、設定項目。
   - **統計画面:**
@@ -65,3 +70,7 @@
     - 集中時間の棒グラフ、メイン画面への戻るボタン。
 - **Notification:**
   - フェーズ終了の通知、次のフェーズ開始ボタン。
+
+```
+
+```
