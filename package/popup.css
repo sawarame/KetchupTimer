@@ -1,5 +1,5 @@
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans CJK JP', 'Microsoft YaHei', 'Microsoft JhengHei', 'Malgun Gothic', Tahoma, Geneva, Verdana, sans-serif;
   width: 300px;
   margin: 0;
   padding: 0;
@@ -34,6 +34,7 @@ body {
   font-weight: 600;
   color: #666;
   margin-bottom: 16px;
+  text-align: center;
 }
 
 .controls {
@@ -43,9 +44,10 @@ body {
 }
 
 .controls button {
-  width: 80px;
-  padding: 8px 0;
+  min-width: 80px;
+  padding: 8px 12px;
   text-align: center;
+  white-space: nowrap;
 }
 
 button {
@@ -113,11 +115,13 @@ button:disabled {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   font-size: 14px;
 }
 
 .settings input {
   width: 60px;
+  flex-shrink: 0;
   padding: 4px;
   border: 1px solid #ccc;
   border-radius: 4px;

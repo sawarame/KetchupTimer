@@ -1,5 +1,6 @@
 /// <reference types="chrome" />
 import { Chart, registerables } from 'chart.js';
+import { getMessage, localizeDocument } from './i18n';
 Chart.register(...registerables);
 
 type Phase = 'focus' | 'break' | 'longBreak';
@@ -73,17 +74,41 @@ async function saveState(state: TimerState) {
   await chrome.storage.local.set({ timerState: state });
 }
 
-async function updateDisplay(state: TimerState) {
+/**
+ * フェーズ種別に対応するローカライズ済み名称を取得する
+ * @param phase - 現在のタイマーフェーズ
+ * @returns ローカライズされたフェーズ名
+ */
+function getPhaseLabel(phase: Phase): string {
+  if (phase === 'break') {
+    return getMessage('phaseBreak', undefined, 'Break');
+  }
+  if (phase === 'longBreak') {
+    return getMessage('phaseLongBreak', undefined, 'Long Break');
+  }
+  return getMessage('phaseFocus', undefined, 'Focus');
+}
+
+/**
+ * 現在のタイマー状態をもとにポップアップ UI の表示を更新する
+ * @param state - 最新のタイマー状態オブジェクト
+ * @returns 更新完了を示す Promise
+ */
+async function updateDisplay(state: TimerState): Promise<void> {
   let ms = state.remainingTime;
   if (state.state === 'running') {
     ms = state.endTime - Date.now();
   }
   timerDisplay.textContent = formatTime(ms);
-  
-  let phaseText = 'Focus';
-  if (state.phase === 'break') phaseText = 'Break';
-  if (state.phase === 'longBreak') phaseText = 'Long Break';
-  phaseDisplay.textContent = `${phaseText} (Cycle: ${state.cycle}/${state.settings.cycles})`;
+
+  const phaseText = getPhaseLabel(state.phase);
+  const currentCycle = String(state.cycle);
+  const totalCycles = String(state.settings.cycles);
+  phaseDisplay.textContent = getMessage(
+    'phaseWithCycle',
+    [phaseText, currentCycle, totalCycles],
+    `${phaseText} (Cycle: ${currentCycle}/${totalCycles})`
+  );
 
   focusTimeInput.value = state.settings.focus.toString();
   breakTimeInput.value = state.settings.break.toString();
@@ -98,14 +123,14 @@ async function updateDisplay(state: TimerState) {
 
   if (state.state === 'stopped') {
     startBtn.style.display = '';
-    startBtn.textContent = 'Start';
+    startBtn.textContent = getMessage('btnStart', undefined, 'Start');
     pauseBtn.style.display = 'none';
   } else if (state.state === 'running') {
     startBtn.style.display = 'none';
     pauseBtn.style.display = '';
   } else if (state.state === 'paused') {
     startBtn.style.display = '';
-    startBtn.textContent = 'Resume';
+    startBtn.textContent = getMessage('btnResume', undefined, 'Resume');
     pauseBtn.style.display = 'none';
   }
 }
@@ -158,7 +183,8 @@ async function updateChart(period: Period) {
         const ds = getLocalDateString(dd);
         weekSum += stats[ds] || 0;
       }
-      labels.push(`${startStr.slice(5)} week`);
+      const weekStart = startStr.slice(5);
+      labels.push(getMessage('chartWeekLabel', [weekStart], `${weekStart} week`));
       values.push(weekSum);
     }
     const d = new Date(referenceDate);
@@ -209,7 +235,7 @@ async function updateChart(period: Period) {
     data: {
       labels: labels,
       datasets: [{
-        label: 'Focus Time (min)',
+        label: getMessage('chartFocusTimeLabel', undefined, 'Focus Time (min)'),
         data: values,
         backgroundColor: '#ff4d4d',
         borderRadius: 4
@@ -234,7 +260,14 @@ async function updateChart(period: Period) {
   });
 }
 
-async function init() {
+/**
+ * ポップアップの初期化処理を行う
+ * @returns 初期化完了を示す Promise
+ */
+async function init(): Promise<void> {
+  // 静的テキストを現在のブラウザ言語に合わせてローカライズする
+  localizeDocument();
+
   const state = await getState();
   await updateDisplay(state);
 

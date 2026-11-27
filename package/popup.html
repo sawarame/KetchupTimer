@@ -1,73 +1,71 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Ketchup Timer</title>
+  <title data-i18n="popupTitle">Ketchup Timer</title>
   <link rel="stylesheet" href="popup.css">
-</head>
   <style>
     body { width: 350px; } /* グラフ表示のために少し幅を広げる */
     .view { display: none; width: 100%; }
     .view.active { display: flex; flex-direction: column; align-items: center; }
     .chart-container { width: 100%; height: 200px; margin-top: 10px; }
     .tabs { display: flex; gap: 5px; margin-bottom: 10px; width: 100%; justify-content: center; }
-    .tab-btn { padding: 4px 8px; font-size: 12px; border: 1px solid #ccc; background: #f0f0f0; color: #333; }
+    .tab-btn { padding: 4px 10px; font-size: 12px; border: 1px solid #ccc; background: #f0f0f0; color: #333; white-space: nowrap; }
     .tab-btn.active { background: #ff4d4d; color: white; border-color: #ff4d4d; }
     .stats-nav { display: flex; align-items: center; justify-content: space-between; margin: 10px 0; padding: 0 5px; width: 100%; }
     .stats-nav button { background-color: #f0f0f0; color: #333; width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; border: 1px solid #ccc; cursor: pointer; }
     .stats-nav button:hover:not(:disabled) { background-color: #e0e0e0; }
     .stats-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
     #currentPeriodLabel { font-size: 13px; font-weight: bold; color: #555; flex-grow: 1; text-align: center; }
-    </style>
-
+  </style>
 </head>
 <body>
   <div class="container">
-    <!-- Main Timer View -->
+    <!-- メインタイマー画面 -->
     <div id="mainView" class="view active">
       <div class="header">
-        <h1>Ketchup Timer</h1>
+        <h1 data-i18n="popupTitle">Ketchup Timer</h1>
       </div>
       <div class="timer-display" id="timerDisplay">25:00</div>
-      <div class="phase-display" id="phaseDisplay">Focus</div>
+      <div class="phase-display" id="phaseDisplay" data-i18n="phaseFocus">Focus</div>
       <div class="controls">
-        <button id="startBtn">Start</button>
-        <button id="pauseBtn">Pause</button>
-        <button id="resetBtn">Reset</button>
+        <button id="startBtn" data-i18n="btnStart">Start</button>
+        <button id="pauseBtn" data-i18n="btnPause">Pause</button>
+        <button id="resetBtn" data-i18n="btnReset">Reset</button>
       </div>
       
       <div class="settings">
         <label>
-          Focus (min):
+          <span data-i18n="labelFocusMinutes">Focus (min):</span>
           <input type="number" id="focusTime" value="25" min="1" max="60">
         </label>
         <label>
-          Break (min):
+          <span data-i18n="labelBreakMinutes">Break (min):</span>
           <input type="number" id="breakTime" value="5" min="1" max="60">
         </label>
         <label>
-          Long Break (min):
+          <span data-i18n="labelLongBreakMinutes">Long Break (min):</span>
           <input type="number" id="longBreakTime" value="15" min="1" max="60">
         </label>
         <label>
-          Cycles before Long Break:
+          <span data-i18n="labelCyclesBeforeLongBreak">Cycles before Long Break:</span>
           <input type="number" id="cycles" value="4" min="1" max="10">
         </label>
       </div>
       <div class="footer" style="margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 10px; width: 100%;">
-        <a href="#" id="viewStats">View Statistics</a>
+        <a href="#" id="viewStats" data-i18n="linkViewStats">View Statistics</a>
       </div>
     </div>
 
-    <!-- Statistics View -->
+    <!-- 統計画面 -->
     <div id="statsView" class="view">
       <div class="header">
-        <h1>Statistics</h1>
+        <h1 data-i18n="statsTitle">Statistics</h1>
       </div>
       <div class="tabs">
-        <button class="tab-btn active" data-period="daily">Daily</button>
-        <button class="tab-btn" data-period="weekly">Weekly</button>
-        <button class="tab-btn" data-period="monthly">Monthly</button>
+        <button class="tab-btn active" data-period="daily" data-i18n="tabDaily">Daily</button>
+        <button class="tab-btn" data-period="weekly" data-i18n="tabWeekly">Weekly</button>
+        <button class="tab-btn" data-period="monthly" data-i18n="tabMonthly">Monthly</button>
       </div>
       <div class="stats-nav">
         <button id="prevPeriod">&lt;</button>
@@ -78,7 +76,7 @@
         <canvas id="statsChart"></canvas>
       </div>
       <div style="margin-top: 20px; text-align: center; width: 100%;">
-        <button id="backToTimer" style="background: #666; width: 100%;">Back to Timer</button>
+        <button id="backToTimer" style="background: #666; width: 100%;" data-i18n="btnBackToTimer">Back to Timer</button>
       </div>
     </div>
   </div>

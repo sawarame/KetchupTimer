@@ -1,4 +1,5 @@
 /// <reference types="chrome" />
+import { getMessage } from './i18n';
 
 export type Phase = 'focus' | 'break' | 'longBreak';
 export type State = 'running' | 'paused' | 'stopped';
@@ -44,9 +45,10 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
 });
 
 /**
- * フェーズ終了時の処理
+ * フェーズ終了時の状態遷移およびシステム通知の表示を行う
+ * @returns 処理完了を示す Promise
  */
-async function handlePhaseEnd() {
+async function handlePhaseEnd(): Promise<void> {
   const data = await chrome.storage.local.get('timerState');
   if (!data.timerState) return;
   
@@ -59,20 +61,28 @@ async function handlePhaseEnd() {
 
   if (state.phase === 'focus') {
     state.cycle += 1;
-    // --- 集中時間の記録を追加 ---
+    // 集中時間を記録する
     await recordFocusTime(state.settings.focus);
     
     if (state.cycle >= state.settings.cycles) {
       state.phase = 'longBreak';
       state.remainingTime = state.settings.longBreak * 60 * 1000;
-      notificationTitle = 'Focus Complete!';
-      notificationMessage = 'Time for a long break. Ketchup bottle is refilling...';
+      notificationTitle = getMessage('notifFocusCompleteTitle', undefined, 'Focus Complete!');
+      notificationMessage = getMessage(
+        'notifLongBreakMessage',
+        undefined,
+        'Time for a long break. Ketchup bottle is refilling...'
+      );
       notificationIcon = 'images/icon-empty-128.png';
     } else {
       state.phase = 'break';
       state.remainingTime = state.settings.break * 60 * 1000;
-      notificationTitle = 'Focus Complete!';
-      notificationMessage = 'Take a short break. Ketchup bottle is refilling...';
+      notificationTitle = getMessage('notifFocusCompleteTitle', undefined, 'Focus Complete!');
+      notificationMessage = getMessage(
+        'notifShortBreakMessage',
+        undefined,
+        'Take a short break. Ketchup bottle is refilling...'
+      );
       notificationIcon = 'images/icon-empty-128.png';
     }
   } else {
@@ -80,10 +90,14 @@ async function handlePhaseEnd() {
     state.phase = 'focus';
     state.remainingTime = state.settings.focus * 60 * 1000;
     if (wasLongBreak) {
-        state.cycle = 0;
+      state.cycle = 0;
     }
-    notificationTitle = 'Break Complete!';
-    notificationMessage = 'Ready to focus? The ketchup is full!';
+    notificationTitle = getMessage('notifBreakCompleteTitle', undefined, 'Break Complete!');
+    notificationMessage = getMessage(
+      'notifBreakCompleteMessage',
+      undefined,
+      'Ready to focus? The ketchup is full!'
+    );
     notificationIcon = 'images/icon-128.png';
   }
 
@@ -94,7 +108,7 @@ async function handlePhaseEnd() {
     iconUrl: chrome.runtime.getURL(notificationIcon),
     title: notificationTitle,
     message: notificationMessage,
-    buttons: [{ title: 'OK - Start Next Phase' }],
+    buttons: [{ title: getMessage('notifNextPhaseButton', undefined, 'OK - Start Next Phase') }],
     requireInteraction: true
   });
   
