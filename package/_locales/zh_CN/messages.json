@@ -7,10 +7,6 @@
     "message": "以番茄酱瓶为灵感的独特番茄钟计时器。通过每日、每周、每月统计图表直观记录并可视化您的专注时间！",
     "description": "Description of the extension"
   },
-  "popupTitle": {
-    "message": "番茄酱计时器",
-    "description": "Title and main heading in the popup"
-  },
   "phaseFocus": {
     "message": "专注",
     "description": "Label for the focus phase"
