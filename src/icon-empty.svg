@@ -1,11 +1,114 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <!-- Bottle Group (Maximized, No Background) -->
-  <g transform="translate(-1.6, -1.6) scale(1.05)">
-    <!-- Bottle interior (white background) with red outline -->
-    <path d="M 22 24 C 22 24, 16 30, 16 40 C 16 50, 16 58, 16 58 C 16 60, 18 62, 20 62 L 44 62 C 46 62, 48 60, 48 58 C 48 58, 48 50, 48 40 C 48 30, 42 24, 42 24 L 38 16 L 26 16 Z" fill="#ffffff" stroke="#ff4d4d" stroke-width="2.5" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <!-- 背景プレート（ライト・ダークテーマ両対応の明るいウォームホワイト） -->
+    <radialGradient id="badge-bg-empty" cx="45%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#f5f6f8" />
+    </radialGradient>
 
-    <!-- Bottle Cap (gold) - Flat design -->
-    <path d="M 25 8 L 39 8 L 39 16 L 25 16 Z" fill="#ffd700" />
-    <path d="M 28 2 L 36 2 L 36 8 L 28 8 Z" fill="#ffd700" />
+    <!-- 空ボトル内部の柔らかいガラス調グラデーション -->
+    <linearGradient id="empty-bottle-bg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#fafbfc" />
+      <stop offset="100%" stop-color="#eef1f5" />
+    </linearGradient>
+
+    <!-- モダンなマスタードゴールドのキャップ -->
+    <linearGradient id="cap-gradient-empty" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffe57f" />
+      <stop offset="50%" stop-color="#ffc928" />
+      <stop offset="100%" stop-color="#e6a700" />
+    </linearGradient>
+
+    <!-- ボトル内側クリップ -->
+    <clipPath id="bottle-clip-empty">
+      <path d="M 55 43 L 73 43 L 75 49 C 81 52, 84 58, 84 65 L 84 91 C 84 97.5, 79 102, 72.5 102 L 55.5 102 C 49 102, 44 97.5, 44 91 L 44 65 C 44 58, 47 52, 53 49 Z" />
+    </clipPath>
+  </defs>
+
+  <!-- 外周バッジ背景 -->
+  <circle cx="64" cy="64" r="60" fill="url(#badge-bg-empty)" stroke="#e2e6ec" stroke-width="2" />
+
+  <!-- タイマーリング（空・補充待ち状態のトラック） -->
+  <circle cx="64" cy="64" r="52" fill="none" stroke="#e6e9ef" stroke-width="8.5" />
+  <!-- リセット済みを示す繊細な破線リング -->
+  <circle
+    cx="64"
+    cy="64"
+    r="52"
+    fill="none"
+    stroke="#ffb3b3"
+    stroke-width="3"
+    stroke-dasharray="6 10"
+    stroke-linecap="round"
+  />
+
+  <!-- タイマー目盛り -->
+  <g stroke="#b8c0cc" stroke-width="2.6" stroke-linecap="round" opacity="0.8">
+    <line x1="64" y1="17.5" x2="64" y2="20.5" />
+    <line x1="107.5" y1="64" x2="110.5" y2="64" />
+    <line x1="64" y1="107.5" x2="64" y2="110.5" />
+    <line x1="17.5" y1="64" x2="20.5" y2="64" />
+  </g>
+  <g fill="#cfd5df" opacity="0.85">
+    <circle cx="94.5" cy="33.5" r="2" />
+    <circle cx="94.5" cy="94.5" r="2" />
+    <circle cx="33.5" cy="94.5" r="2" />
+    <circle cx="33.5" cy="33.5" r="2" />
+  </g>
+
+  <!-- 空のケチャップボトル本体 -->
+  <g>
+    <path
+      d="M 55 43 L 73 43 L 75 49 C 81 52, 84 58, 84 65 L 84 91 C 84 97.5, 79 102, 72.5 102 L 55.5 102 C 49 102, 44 97.5, 44 91 L 44 65 C 44 58, 47 52, 53 49 Z"
+      fill="url(#empty-bottle-bg)"
+    />
+
+    <!-- ボトル底にわずかに残ったケチャップ＋光沢 -->
+    <g clip-path="url(#bottle-clip-empty)">
+      <rect x="42" y="96.5" width="44" height="7" fill="#ff6b6b" opacity="0.85" />
+      <path
+        d="M 52 55 C 49.5 58.5, 49 63, 49 68 L 49 87"
+        fill="none"
+        stroke="#dce1e8"
+        stroke-width="3.2"
+        stroke-linecap="round"
+        opacity="0.7"
+      />
+    </g>
+
+    <!-- 赤い輪郭線で空状態でも視認性を確保 -->
+    <path
+      d="M 55 43 L 73 43 L 75 49 C 81 52, 84 58, 84 65 L 84 91 C 84 97.5, 79 102, 72.5 102 L 55.5 102 C 49 102, 44 97.5, 44 91 L 44 65 C 44 58, 47 52, 53 49 Z"
+      fill="none"
+      stroke="#ff4d4d"
+      stroke-width="3"
+      stroke-linejoin="round"
+    />
+
+    <!-- 淡い中央ラベル（空状態のシルエット統一） -->
+    <rect x="53.5" y="64.5" width="21" height="23" rx="6" fill="#fff5f5" stroke="#ffd2d2" stroke-width="1.5" />
+    <circle cx="64" cy="77" r="5" fill="none" stroke="#ff8585" stroke-width="2" />
+
+    <!-- ノズル -->
+    <path
+      d="M 61.5 27 C 61.5 26, 66.5 26, 66.5 27 L 69 35 L 59 35 Z"
+      fill="url(#cap-gradient-empty)"
+      stroke="#c78d00"
+      stroke-width="1.8"
+      stroke-linejoin="round"
+    />
+    <!-- キャップベース -->
+    <rect
+      x="52.5"
+      y="34.5"
+      width="23"
+      height="9"
+      rx="3.2"
+      fill="url(#cap-gradient-empty)"
+      stroke="#c78d00"
+      stroke-width="1.8"
+    />
+    <line x1="56.5" y1="37.5" x2="62.5" y2="37.5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" opacity="0.65" />
   </g>
 </svg>
