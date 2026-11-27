@@ -23,14 +23,15 @@ type StreamPinEdge = 'none' | 'top' | 'bottom';
 const ALARM_NAME = 'ketchupTimerAlarm';
 const OFFSCREEN_DOCUMENT_PATH = 'offscreen.html';
 
+// Service Worker が js/background.js 配下で動作するため、拡張機能ルート基準のパスを指定する
 const STATIC_FULL_ICON_PATHS: Record<string, string> = {
-  '16': 'images/icon-16.png',
-  '32': 'images/icon-32.png'
+  '16': '/images/icon-16.png',
+  '32': '/images/icon-32.png'
 };
 
 const STATIC_EMPTY_ICON_PATHS: Record<string, string> = {
-  '16': 'images/icon-empty-16.png',
-  '32': 'images/icon-empty-32.png'
+  '16': '/images/icon-empty-16.png',
+  '32': '/images/icon-empty-32.png'
 };
 
 let isCreatingOffscreen = false;
@@ -193,10 +194,14 @@ async function closeOffscreenDocument(): Promise<void> {
  */
 async function setStaticToolbarIcon(mode: 'full' | 'empty'): Promise<void> {
   if (lastStaticIconMode === mode) return;
-  lastStaticIconMode = mode;
-  await chrome.action.setIcon({
-    path: mode === 'full' ? STATIC_FULL_ICON_PATHS : STATIC_EMPTY_ICON_PATHS
-  });
+  try {
+    await chrome.action.setIcon({
+      path: mode === 'full' ? STATIC_FULL_ICON_PATHS : STATIC_EMPTY_ICON_PATHS
+    });
+    lastStaticIconMode = mode;
+  } catch (e) {
+    console.error('[Icon Error] Failed to set static toolbar icon:', e);
+  }
 }
 
 /**
@@ -251,9 +256,13 @@ async function updateIcon(): Promise<void> {
   const imageData32 = renderIconInSW(ratio, 32, inverted, isAnimating, now);
 
   if (imageData16 && imageData32) {
-    await chrome.action.setIcon({
-      imageData: { '16': imageData16, '32': imageData32 }
-    });
+    try {
+      await chrome.action.setIcon({
+        imageData: { '16': imageData16, '32': imageData32 }
+      });
+    } catch (e) {
+      console.error('[Icon Error] Failed to set dynamic toolbar icon:', e);
+    }
   }
 }
 
