@@ -73,6 +73,10 @@
     "message": "Cycles before Long Break:",
     "description": "Setting label for number of focus cycles before a long break"
   },
+  "labelLanguage": {
+    "message": "Language:",
+    "description": "Setting label for display language selector"
+  },
   "linkViewStats": {
     "message": "View Statistics",
     "description": "Link text to open the statistics view"

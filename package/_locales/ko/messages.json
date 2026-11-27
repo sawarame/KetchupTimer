@@ -73,6 +73,10 @@
     "message": "긴 휴식 전 사이클 수:",
     "description": "Setting label for number of focus cycles before a long break"
   },
+  "labelLanguage": {
+    "message": "언어:",
+    "description": "Setting label for display language selector"
+  },
   "linkViewStats": {
     "message": "통계 보기",
     "description": "Link text to open the statistics view"

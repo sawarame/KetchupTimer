@@ -73,6 +73,10 @@
     "message": "长休息前的专注周期数：",
     "description": "Setting label for number of focus cycles before a long break"
   },
+  "labelLanguage": {
+    "message": "语言：",
+    "description": "Setting label for display language selector"
+  },
   "linkViewStats": {
     "message": "查看统计",
     "description": "Link text to open the statistics view"
