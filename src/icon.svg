@@ -1,30 +1,124 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
   <defs>
-    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#f0f2f5;stop-opacity:1" />
+    <!-- 背景プレート（ライト・ダークテーマ両対応の明るいウォームホワイト） -->
+    <radialGradient id="badge-bg" cx="45%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#fff1ec" />
+    </radialGradient>
+
+    <!-- タイマーリング進行アーク用グラデーション -->
+    <linearGradient id="ring-gradient" x1="15%" y1="10%" x2="85%" y2="90%">
+      <stop offset="0%" stop-color="#ff7a6b" />
+      <stop offset="55%" stop-color="#ff4d4d" />
+      <stop offset="100%" stop-color="#d92638" />
     </linearGradient>
-    <linearGradient id="ketchup-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#ff8585;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#ff4d4d;stop-opacity:1" />
+
+    <!-- ケチャップ液体の立体グラデーション -->
+    <linearGradient id="ketchup-gradient" x1="0%" y1="0%" x2="100%" y2="15%">
+      <stop offset="0%" stop-color="#ff7878" />
+      <stop offset="45%" stop-color="#ff4d4d" />
+      <stop offset="100%" stop-color="#cf2334" />
     </linearGradient>
+
+    <!-- モダンなマスタードゴールドのキャップ -->
+    <linearGradient id="cap-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffe57f" />
+      <stop offset="50%" stop-color="#ffc928" />
+      <stop offset="100%" stop-color="#e6a700" />
+    </linearGradient>
+
+    <!-- ボトル内側クリップ -->
     <clipPath id="bottle-clip">
-      <path d="M 22 24 C 22 24, 16 30, 16 40 C 16 50, 16 58, 16 58 C 16 60, 18 62, 20 62 L 44 62 C 46 62, 48 60, 48 58 C 48 58, 48 50, 48 40 C 48 30, 42 24, 42 24 L 38 16 L 26 16 Z" />
+      <path d="M 55 43 L 73 43 L 75 49 C 81 52, 84 58, 84 65 L 84 91 C 84 97.5, 79 102, 72.5 102 L 55.5 102 C 49 102, 44 97.5, 44 91 L 44 65 C 44 58, 47 52, 53 49 Z" />
     </clipPath>
   </defs>
 
-  <!-- Bottle Group (Maximized, No Background) -->
-  <g transform="translate(-1.6, -1.6) scale(1.05)">
-    <!-- Bottle interior (white background for clarity) -->
-    <path d="M 22 24 C 22 24, 16 30, 16 40 C 16 50, 16 58, 16 58 C 16 60, 18 62, 20 62 L 44 62 C 46 62, 48 60, 48 58 C 48 58, 48 50, 48 40 C 48 30, 42 24, 42 24 L 38 16 L 26 16 Z" fill="#ffffff" />
+  <!-- 外周バッジ背景（ツールバー上で視認性を確保する丸型プレート） -->
+  <circle cx="64" cy="64" r="60" fill="url(#badge-bg)" stroke="#f6d2cc" stroke-width="2" />
 
-    <!-- Ketchup liquid (gradient fill) -->
+  <!-- タイマーリング（背景トラック） -->
+  <circle cx="64" cy="64" r="52" fill="none" stroke="#fde0dc" stroke-width="8.5" />
+
+  <!-- タイマーリング（進行アーク: 12時から時計回りに約75%表示） -->
+  <path
+    d="M 64 12 A 52 52 0 1 1 12 64"
+    fill="none"
+    stroke="url(#ring-gradient)"
+    stroke-width="8.5"
+    stroke-linecap="round"
+  />
+
+  <!-- タイマー目盛り（主要4方向＋斜め4方向のドット） -->
+  <g stroke="#e06666" stroke-width="2.6" stroke-linecap="round" opacity="0.75">
+    <line x1="64" y1="17.5" x2="64" y2="20.5" />
+    <line x1="107.5" y1="64" x2="110.5" y2="64" />
+    <line x1="64" y1="107.5" x2="64" y2="110.5" />
+    <line x1="17.5" y1="64" x2="20.5" y2="64" />
+  </g>
+  <g fill="#f09a94" opacity="0.8">
+    <circle cx="94.5" cy="33.5" r="2" />
+    <circle cx="94.5" cy="94.5" r="2" />
+    <circle cx="33.5" cy="94.5" r="2" />
+    <circle cx="33.5" cy="33.5" r="2" />
+  </g>
+
+  <!-- モダンなケチャップボトル本体 -->
+  <g>
+    <!-- ボトル下地（白） -->
+    <path
+      d="M 55 43 L 73 43 L 75 49 C 81 52, 84 58, 84 65 L 84 91 C 84 97.5, 79 102, 72.5 102 L 55.5 102 C 49 102, 44 97.5, 44 91 L 44 65 C 44 58, 47 52, 53 49 Z"
+      fill="#ffffff"
+    />
+
+    <!-- ケチャップ液体（満タン） -->
     <g clip-path="url(#bottle-clip)">
-      <rect id="ketchup-liquid" x="0" y="16" width="64" height="48" fill="url(#ketchup-gradient)" />
+      <rect x="42" y="43" width="44" height="61" fill="url(#ketchup-gradient)" />
+      <!-- 左側の光沢ハイライト -->
+      <path
+        d="M 52 55 C 49.5 58.5, 49 63, 49 68 L 49 87"
+        fill="none"
+        stroke="#ffffff"
+        stroke-width="3.6"
+        stroke-linecap="round"
+        opacity="0.45"
+      />
+      <circle cx="49" cy="94" r="2" fill="#ffffff" opacity="0.45" />
     </g>
 
-    <!-- Bottle Cap (gold) - Flat design -->
-    <path d="M 25 8 L 39 8 L 39 16 L 25 16 Z" fill="#ffd700" />
-    <path d="M 28 2 L 36 2 L 36 8 L 28 8 Z" fill="#ffd700" />
+    <!-- ボトル外枠の引き締めアウトライン -->
+    <path
+      d="M 55 43 L 73 43 L 75 49 C 81 52, 84 58, 84 65 L 84 91 C 84 97.5, 79 102, 72.5 102 L 55.5 102 C 49 102, 44 97.5, 44 91 L 44 65 C 44 58, 47 52, 53 49 Z"
+      fill="none"
+      stroke="#b81d2c"
+      stroke-width="2.4"
+      stroke-linejoin="round"
+    />
+
+    <!-- モダンな中央ラベル（ミニマルなトマトアクセント付き） -->
+    <rect x="53.5" y="64.5" width="21" height="23" rx="6" fill="#ffffff" opacity="0.95" />
+    <circle cx="64" cy="77" r="5.5" fill="#ff4d4d" />
+    <path d="M 61.5 71.7 C 63 69.7, 65 69.7, 66.5 71.7" fill="none" stroke="#2ecc71" stroke-width="2.2" stroke-linecap="round" />
+
+    <!-- ノズル（先端に丸みのあるスクイーズキャップ） -->
+    <path
+      d="M 61.5 27 C 61.5 26, 66.5 26, 66.5 27 L 69 35 L 59 35 Z"
+      fill="url(#cap-gradient)"
+      stroke="#c78d00"
+      stroke-width="1.8"
+      stroke-linejoin="round"
+    />
+    <!-- キャップベース -->
+    <rect
+      x="52.5"
+      y="34.5"
+      width="23"
+      height="9"
+      rx="3.2"
+      fill="url(#cap-gradient)"
+      stroke="#c78d00"
+      stroke-width="1.8"
+    />
+    <!-- キャップの光沢 -->
+    <line x1="56.5" y1="37.5" x2="62.5" y2="37.5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" opacity="0.65" />
   </g>
 </svg>
