@@ -6,5 +6,133 @@
   "extensionDescription": {
     "message": "ケチャップボトルがモチーフのポモドーロタイマー。集中時間の集計機能と日間・週間・月間グラフで日々の成果を可視化！",
     "description": "Description of the extension"
+  },
+  "popupTitle": {
+    "message": "ケチャップタイマー",
+    "description": "Title and main heading in the popup"
+  },
+  "phaseFocus": {
+    "message": "集中",
+    "description": "Label for the focus phase"
+  },
+  "phaseBreak": {
+    "message": "休憩",
+    "description": "Label for the short break phase"
+  },
+  "phaseLongBreak": {
+    "message": "長い休憩",
+    "description": "Label for the long break phase"
+  },
+  "phaseWithCycle": {
+    "message": "$PHASE$（サイクル: $CURRENT$/$TOTAL$）",
+    "description": "Phase label with current and total cycle counts",
+    "placeholders": {
+      "phase": {
+        "content": "$1",
+        "example": "集中"
+      },
+      "current": {
+        "content": "$2",
+        "example": "1"
+      },
+      "total": {
+        "content": "$3",
+        "example": "4"
+      }
+    }
+  },
+  "btnStart": {
+    "message": "開始",
+    "description": "Button to start the timer"
+  },
+  "btnResume": {
+    "message": "再開",
+    "description": "Button to resume a paused timer"
+  },
+  "btnPause": {
+    "message": "一時停止",
+    "description": "Button to pause the timer"
+  },
+  "btnReset": {
+    "message": "リセット",
+    "description": "Button to reset the timer"
+  },
+  "labelFocusMinutes": {
+    "message": "集中時間（分）:",
+    "description": "Setting label for focus duration in minutes"
+  },
+  "labelBreakMinutes": {
+    "message": "休憩時間（分）:",
+    "description": "Setting label for short break duration in minutes"
+  },
+  "labelLongBreakMinutes": {
+    "message": "長い休憩（分）:",
+    "description": "Setting label for long break duration in minutes"
+  },
+  "labelCyclesBeforeLongBreak": {
+    "message": "長い休憩までのサイクル数:",
+    "description": "Setting label for number of focus cycles before a long break"
+  },
+  "linkViewStats": {
+    "message": "統計を見る",
+    "description": "Link text to open the statistics view"
+  },
+  "statsTitle": {
+    "message": "統計",
+    "description": "Heading for the statistics view"
+  },
+  "tabDaily": {
+    "message": "日間",
+    "description": "Tab button for daily statistics"
+  },
+  "tabWeekly": {
+    "message": "週間",
+    "description": "Tab button for weekly statistics"
+  },
+  "tabMonthly": {
+    "message": "月間",
+    "description": "Tab button for monthly statistics"
+  },
+  "btnBackToTimer": {
+    "message": "タイマーに戻る",
+    "description": "Button to return from statistics view to timer view"
+  },
+  "chartFocusTimeLabel": {
+    "message": "集中時間（分）",
+    "description": "Dataset label for the focus time bar chart"
+  },
+  "chartWeekLabel": {
+    "message": "$DATE$ 週",
+    "description": "X-axis label for a week starting on DATE",
+    "placeholders": {
+      "date": {
+        "content": "$1",
+        "example": "05-01"
+      }
+    }
+  },
+  "notifFocusCompleteTitle": {
+    "message": "集中終了！",
+    "description": "Notification title when a focus session finishes"
+  },
+  "notifLongBreakMessage": {
+    "message": "長い休憩の時間です。ケチャップボトルを補充中...",
+    "description": "Notification body when transitioning to a long break"
+  },
+  "notifShortBreakMessage": {
+    "message": "短い休憩をとりましょう。ケチャップボトルを補充中...",
+    "description": "Notification body when transitioning to a short break"
+  },
+  "notifBreakCompleteTitle": {
+    "message": "休憩終了！",
+    "description": "Notification title when a break finishes"
+  },
+  "notifBreakCompleteMessage": {
+    "message": "集中の準備はできましたか？ケチャップは満タンです！",
+    "description": "Notification body when transitioning back to a focus session"
+  },
+  "notifNextPhaseButton": {
+    "message": "OK - 次のフェーズを開始",
+    "description": "Action button text on the phase completion notification"
   }
 }

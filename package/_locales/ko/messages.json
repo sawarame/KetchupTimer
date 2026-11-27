@@ -1,0 +1,138 @@
+{
+  "extensionName": {
+    "message": "KetchupTimer (케첩 타이머)",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "케첩 병을 모티브로 한 독특한 뽀모도로 타이머. 일간·주간·월간 통계 그래프로 집중 시간을 한눈에 확인하세요!",
+    "description": "Description of the extension"
+  },
+  "popupTitle": {
+    "message": "케첩 타이머",
+    "description": "Title and main heading in the popup"
+  },
+  "phaseFocus": {
+    "message": "집중",
+    "description": "Label for the focus phase"
+  },
+  "phaseBreak": {
+    "message": "휴식",
+    "description": "Label for the short break phase"
+  },
+  "phaseLongBreak": {
+    "message": "긴 휴식",
+    "description": "Label for the long break phase"
+  },
+  "phaseWithCycle": {
+    "message": "$PHASE$ (사이클: $CURRENT$/$TOTAL$)",
+    "description": "Phase label with current and total cycle counts",
+    "placeholders": {
+      "phase": {
+        "content": "$1",
+        "example": "집중"
+      },
+      "current": {
+        "content": "$2",
+        "example": "1"
+      },
+      "total": {
+        "content": "$3",
+        "example": "4"
+      }
+    }
+  },
+  "btnStart": {
+    "message": "시작",
+    "description": "Button to start the timer"
+  },
+  "btnResume": {
+    "message": "재개",
+    "description": "Button to resume a paused timer"
+  },
+  "btnPause": {
+    "message": "일시정지",
+    "description": "Button to pause the timer"
+  },
+  "btnReset": {
+    "message": "초기화",
+    "description": "Button to reset the timer"
+  },
+  "labelFocusMinutes": {
+    "message": "집중 시간 (분):",
+    "description": "Setting label for focus duration in minutes"
+  },
+  "labelBreakMinutes": {
+    "message": "휴식 시간 (분):",
+    "description": "Setting label for short break duration in minutes"
+  },
+  "labelLongBreakMinutes": {
+    "message": "긴 휴식 시간 (분):",
+    "description": "Setting label for long break duration in minutes"
+  },
+  "labelCyclesBeforeLongBreak": {
+    "message": "긴 휴식 전 사이클 수:",
+    "description": "Setting label for number of focus cycles before a long break"
+  },
+  "linkViewStats": {
+    "message": "통계 보기",
+    "description": "Link text to open the statistics view"
+  },
+  "statsTitle": {
+    "message": "통계",
+    "description": "Heading for the statistics view"
+  },
+  "tabDaily": {
+    "message": "일간",
+    "description": "Tab button for daily statistics"
+  },
+  "tabWeekly": {
+    "message": "주간",
+    "description": "Tab button for weekly statistics"
+  },
+  "tabMonthly": {
+    "message": "월간",
+    "description": "Tab button for monthly statistics"
+  },
+  "btnBackToTimer": {
+    "message": "타이머로 돌아가기",
+    "description": "Button to return from statistics view to timer view"
+  },
+  "chartFocusTimeLabel": {
+    "message": "집중 시간 (분)",
+    "description": "Dataset label for the focus time bar chart"
+  },
+  "chartWeekLabel": {
+    "message": "$DATE$ 주",
+    "description": "X-axis label for a week starting on DATE",
+    "placeholders": {
+      "date": {
+        "content": "$1",
+        "example": "05-01"
+      }
+    }
+  },
+  "notifFocusCompleteTitle": {
+    "message": "집중 완료!",
+    "description": "Notification title when a focus session finishes"
+  },
+  "notifLongBreakMessage": {
+    "message": "긴 휴식 시간입니다. 케첩 병을 다시 채우는 중...",
+    "description": "Notification body when transitioning to a long break"
+  },
+  "notifShortBreakMessage": {
+    "message": "잠시 휴식을 취하세요. 케첩 병을 다시 채우는 중...",
+    "description": "Notification body when transitioning to a short break"
+  },
+  "notifBreakCompleteTitle": {
+    "message": "휴식 완료!",
+    "description": "Notification title when a break finishes"
+  },
+  "notifBreakCompleteMessage": {
+    "message": "집중할 준비가 되셨나요? 케첩이 가득 찼습니다!",
+    "description": "Notification body when transitioning back to a focus session"
+  },
+  "notifNextPhaseButton": {
+    "message": "확인 - 다음 단계 시작",
+    "description": "Action button text on the phase completion notification"
+  }
+}

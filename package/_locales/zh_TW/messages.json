@@ -1,0 +1,138 @@
+{
+  "extensionName": {
+    "message": "KetchupTimer（番茄醬計時器）",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "以番茄醬瓶為靈感的獨特番茄鐘計時器。透過每日、每週、每月統計圖表直覺記錄並視覺化您的專注時間！",
+    "description": "Description of the extension"
+  },
+  "popupTitle": {
+    "message": "番茄醬計時器",
+    "description": "Title and main heading in the popup"
+  },
+  "phaseFocus": {
+    "message": "專注",
+    "description": "Label for the focus phase"
+  },
+  "phaseBreak": {
+    "message": "短休息",
+    "description": "Label for the short break phase"
+  },
+  "phaseLongBreak": {
+    "message": "長休息",
+    "description": "Label for the long break phase"
+  },
+  "phaseWithCycle": {
+    "message": "$PHASE$（週期：$CURRENT$/$TOTAL$）",
+    "description": "Phase label with current and total cycle counts",
+    "placeholders": {
+      "phase": {
+        "content": "$1",
+        "example": "專注"
+      },
+      "current": {
+        "content": "$2",
+        "example": "1"
+      },
+      "total": {
+        "content": "$3",
+        "example": "4"
+      }
+    }
+  },
+  "btnStart": {
+    "message": "開始",
+    "description": "Button to start the timer"
+  },
+  "btnResume": {
+    "message": "繼續",
+    "description": "Button to resume a paused timer"
+  },
+  "btnPause": {
+    "message": "暫停",
+    "description": "Button to pause the timer"
+  },
+  "btnReset": {
+    "message": "重設",
+    "description": "Button to reset the timer"
+  },
+  "labelFocusMinutes": {
+    "message": "專注時長（分鐘）：",
+    "description": "Setting label for focus duration in minutes"
+  },
+  "labelBreakMinutes": {
+    "message": "短休息時長（分鐘）：",
+    "description": "Setting label for short break duration in minutes"
+  },
+  "labelLongBreakMinutes": {
+    "message": "長休息時長（分鐘）：",
+    "description": "Setting label for long break duration in minutes"
+  },
+  "labelCyclesBeforeLongBreak": {
+    "message": "長休息前的專注週期數：",
+    "description": "Setting label for number of focus cycles before a long break"
+  },
+  "linkViewStats": {
+    "message": "查看統計",
+    "description": "Link text to open the statistics view"
+  },
+  "statsTitle": {
+    "message": "統計",
+    "description": "Heading for the statistics view"
+  },
+  "tabDaily": {
+    "message": "每日",
+    "description": "Tab button for daily statistics"
+  },
+  "tabWeekly": {
+    "message": "每週",
+    "description": "Tab button for weekly statistics"
+  },
+  "tabMonthly": {
+    "message": "每月",
+    "description": "Tab button for monthly statistics"
+  },
+  "btnBackToTimer": {
+    "message": "返回計時器",
+    "description": "Button to return from statistics view to timer view"
+  },
+  "chartFocusTimeLabel": {
+    "message": "專注時間（分鐘）",
+    "description": "Dataset label for the focus time bar chart"
+  },
+  "chartWeekLabel": {
+    "message": "$DATE$ 週",
+    "description": "X-axis label for a week starting on DATE",
+    "placeholders": {
+      "date": {
+        "content": "$1",
+        "example": "05-01"
+      }
+    }
+  },
+  "notifFocusCompleteTitle": {
+    "message": "專注完成！",
+    "description": "Notification title when a focus session finishes"
+  },
+  "notifLongBreakMessage": {
+    "message": "該進行長休息了。番茄醬瓶正在補充中...",
+    "description": "Notification body when transitioning to a long break"
+  },
+  "notifShortBreakMessage": {
+    "message": "稍微休息一下吧。番茄醬瓶正在補充中...",
+    "description": "Notification body when transitioning to a short break"
+  },
+  "notifBreakCompleteTitle": {
+    "message": "休息結束！",
+    "description": "Notification title when a break finishes"
+  },
+  "notifBreakCompleteMessage": {
+    "message": "準備好專注了嗎？番茄醬已裝滿！",
+    "description": "Notification body when transitioning back to a focus session"
+  },
+  "notifNextPhaseButton": {
+    "message": "確定 - 開始下一階段",
+    "description": "Action button text on the phase completion notification"
+  }
+}
