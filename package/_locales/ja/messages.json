@@ -7,10 +7,6 @@
     "message": "ケチャップボトルがモチーフのポモドーロタイマー。集中時間の集計機能と日間・週間・月間グラフで日々の成果を可視化！",
     "description": "Description of the extension"
   },
-  "popupTitle": {
-    "message": "ケチャップタイマー",
-    "description": "Title and main heading in the popup"
-  },
   "phaseFocus": {
     "message": "集中",
     "description": "Label for the focus phase"
@@ -72,6 +68,10 @@
   "labelCyclesBeforeLongBreak": {
     "message": "長い休憩までのサイクル数:",
     "description": "Setting label for number of focus cycles before a long break"
+  },
+  "labelLanguage": {
+    "message": "言語:",
+    "description": "Setting label for display language selector"
   },
   "linkViewStats": {
     "message": "統計を見る",

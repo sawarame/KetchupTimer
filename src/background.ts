@@ -1,5 +1,5 @@
 /// <reference types="chrome" />
-import { getMessage } from './i18n';
+import { getMessage, initI18n } from './i18n';
 
 export type Phase = 'focus' | 'break' | 'longBreak';
 export type State = 'running' | 'paused' | 'stopped';
@@ -63,6 +63,9 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
  * @returns 処理完了を示す Promise
  */
 async function handlePhaseEnd(): Promise<void> {
+  // Service Worker 復帰直後や言語変更直後でも最新設定を反映するため、通知生成前に言語をロードする
+  await initI18n();
+
   const data = await chrome.storage.local.get('timerState');
   if (!data.timerState) return;
 

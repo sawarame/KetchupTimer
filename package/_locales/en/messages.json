@@ -7,10 +7,6 @@
     "message": "A unique Pomodoro timer featuring a ketchup bottle concept. Track your focus time with daily, weekly, and monthly visualizations!",
     "description": "Description of the extension"
   },
-  "popupTitle": {
-    "message": "Ketchup Timer",
-    "description": "Title and main heading in the popup"
-  },
   "phaseFocus": {
     "message": "Focus",
     "description": "Label for the focus phase"
@@ -72,6 +68,10 @@
   "labelCyclesBeforeLongBreak": {
     "message": "Cycles before Long Break:",
     "description": "Setting label for number of focus cycles before a long break"
+  },
+  "labelLanguage": {
+    "message": "Language:",
+    "description": "Setting label for display language selector"
   },
   "linkViewStats": {
     "message": "View Statistics",

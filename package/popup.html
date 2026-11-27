@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title data-i18n="popupTitle">Ketchup Timer</title>
+  <title>Ketchup Timer</title>
   <link rel="stylesheet" href="popup.css">
   <style>
     body { width: 350px; } /* グラフ表示のために少し幅を広げる */
@@ -25,7 +25,7 @@
     <div id="mainView" class="view active">
       <div class="header">
         <img src="images/icon-128.png" alt="" class="header-icon" width="32" height="32">
-        <h1 data-i18n="popupTitle">Ketchup Timer</h1>
+        <h1>Ketchup Timer</h1>
       </div>
       <div class="timer-display" id="timerDisplay">25:00</div>
       <div class="phase-display" id="phaseDisplay" data-i18n="phaseFocus">Focus</div>
@@ -51,6 +51,16 @@
         <label>
           <span data-i18n="labelCyclesBeforeLongBreak">Cycles before Long Break:</span>
           <input type="number" id="cycles" value="4" min="1" max="10">
+        </label>
+        <label>
+          <span data-i18n="labelLanguage">Language:</span>
+          <select id="languageSelect">
+            <option value="en">English</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="zh_CN">简体中文</option>
+            <option value="zh_TW">繁體中文</option>
+          </select>
         </label>
       </div>
       <div class="footer" style="margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 10px; width: 100%;">

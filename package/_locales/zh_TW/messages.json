@@ -7,10 +7,6 @@
     "message": "以番茄醬瓶為靈感的獨特番茄鐘計時器。透過每日、每週、每月統計圖表直覺記錄並視覺化您的專注時間！",
     "description": "Description of the extension"
   },
-  "popupTitle": {
-    "message": "番茄醬計時器",
-    "description": "Title and main heading in the popup"
-  },
   "phaseFocus": {
     "message": "專注",
     "description": "Label for the focus phase"
@@ -72,6 +68,10 @@
   "labelCyclesBeforeLongBreak": {
     "message": "長休息前的專注週期數：",
     "description": "Setting label for number of focus cycles before a long break"
+  },
+  "labelLanguage": {
+    "message": "語言：",
+    "description": "Setting label for display language selector"
   },
   "linkViewStats": {
     "message": "查看統計",

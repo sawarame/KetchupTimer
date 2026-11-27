@@ -1,6 +1,6 @@
 /// <reference types="chrome" />
 import { Chart, registerables } from 'chart.js';
-import { getMessage, localizeDocument } from './i18n';
+import { getMessage, initI18n, isSupportedLocale, localizeDocument, setLanguage } from './i18n';
 Chart.register(...registerables);
 
 type Phase = 'focus' | 'break' | 'longBreak';
@@ -46,6 +46,7 @@ const focusTimeInput = document.getElementById('focusTime') as HTMLInputElement;
 const breakTimeInput = document.getElementById('breakTime') as HTMLInputElement;
 const longBreakTimeInput = document.getElementById('longBreakTime') as HTMLInputElement;
 const cyclesInput = document.getElementById('cycles') as HTMLInputElement;
+const languageSelect = document.getElementById('languageSelect') as HTMLSelectElement | null;
 
 function formatTime(ms: number): string {
   if (ms < 0) ms = 0;
@@ -265,8 +266,13 @@ async function updateChart(period: Period) {
  * @returns 初期化完了を示す Promise
  */
 async function init(): Promise<void> {
-  // 静的テキストを現在のブラウザ言語に合わせてローカライズする
+  // 保存済み設定またはブラウザ言語をもとに言語辞書を初期化し、静的テキストをローカライズする
+  const currentLocale = await initI18n();
   localizeDocument();
+
+  if (languageSelect) {
+    languageSelect.value = currentLocale;
+  }
 
   const state = await getState();
   await updateDisplay(state);
@@ -331,6 +337,25 @@ async function init(): Promise<void> {
   breakTimeInput.addEventListener('input', saveSettings);
   longBreakTimeInput.addEventListener('input', saveSettings);
   cyclesInput.addEventListener('input', saveSettings);
+
+  // 言語選択セレクトボックスの変更時に設定を保存し、表示を即時更新する
+  languageSelect?.addEventListener('change', async () => {
+    const selected = languageSelect.value;
+    if (!isSupportedLocale(selected)) return;
+
+    const appliedLocale = await setLanguage(selected);
+    languageSelect.value = appliedLocale;
+    localizeDocument();
+
+    const currentState = await getState();
+    await updateDisplay(currentState);
+
+    if (statsView.classList.contains('active')) {
+      const activeTab = document.querySelector('.tab-btn.active') as HTMLButtonElement | null;
+      const period = (activeTab?.dataset.period as Period | undefined) ?? 'daily';
+      await updateChart(period);
+    }
+  });
 
   // 画面遷移イベント
   document.getElementById('viewStats')?.addEventListener('click', (e) => {

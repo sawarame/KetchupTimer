@@ -7,10 +7,6 @@
     "message": "케첩 병을 모티브로 한 독특한 뽀모도로 타이머. 일간·주간·월간 통계 그래프로 집중 시간을 한눈에 확인하세요!",
     "description": "Description of the extension"
   },
-  "popupTitle": {
-    "message": "케첩 타이머",
-    "description": "Title and main heading in the popup"
-  },
   "phaseFocus": {
     "message": "집중",
     "description": "Label for the focus phase"
@@ -72,6 +68,10 @@
   "labelCyclesBeforeLongBreak": {
     "message": "긴 휴식 전 사이클 수:",
     "description": "Setting label for number of focus cycles before a long break"
+  },
+  "labelLanguage": {
+    "message": "언어:",
+    "description": "Setting label for display language selector"
   },
   "linkViewStats": {
     "message": "통계 보기",
