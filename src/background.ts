@@ -18,6 +18,8 @@ export interface TimerState {
   };
 }
 
+type StreamPinEdge = 'none' | 'top' | 'bottom';
+
 const ALARM_NAME = 'ketchupTimerAlarm';
 const OFFSCREEN_DOCUMENT_PATH = 'offscreen.html';
 
@@ -265,7 +267,7 @@ async function updateIcon(): Promise<void> {
  * @param endY - ストリーム終了 Y 座標（下端）
  * @param time - アニメーション基準時刻（ミリ秒）
  * @param baseHalfWidth - ストリームの基本半幅
- * @param pinTop - true のとき開始点（ノズル口元）で横揺れを抑えて自然に接続する
+ * @param pinEdge - ノズル口元に自然接続するため横揺れを抑える端点
  */
 function drawContinuousStream(
   ctx: OffscreenCanvasRenderingContext2D,
@@ -274,7 +276,7 @@ function drawContinuousStream(
   endY: number,
   time: number,
   baseHalfWidth: number,
-  pinTop: boolean
+  pinEdge: StreamPinEdge
 ): void {
   const length = endY - startY;
   if (length <= 0.5) return;
@@ -292,13 +294,23 @@ function drawContinuousStream(
     const y = startY + length * t;
     const wavePhase = y * 0.58 - timePhase;
 
-    // ノズル接続部はブレを抑え、下に向かうほど柔らかい波打ちを強める
-    const swayWeight = pinTop ? Math.min(1, t * 2.4) : 0.75;
+    // ノズル接続端は横揺れを抑え、自由端に向かって柔らかい波打ちを強める
+    let swayWeight = 0.75;
+    if (pinEdge === 'top') {
+      swayWeight = Math.min(1, t * 2.4);
+    } else if (pinEdge === 'bottom') {
+      swayWeight = Math.min(1, (1 - t) * 2.4);
+    }
     const sway = Math.sin(wavePhase) * 1.05 * swayWeight;
 
     // ニュルッと押し出されるような太さの脈動
     const pulse = Math.sin(wavePhase * 1.35 + 0.9) * (baseHalfWidth * 0.28);
-    const taper = pinTop ? 0.85 + 0.15 * Math.min(1, t * 3) : 1.0;
+    let taper = 1.0;
+    if (pinEdge === 'top') {
+      taper = 0.8 + 0.2 * Math.min(1, t * 3);
+    } else if (pinEdge === 'bottom') {
+      taper = 0.75 + 0.25 * Math.min(1, (1 - t) * 3);
+    }
     const halfWidth = Math.max(0.85, (baseHalfWidth + pulse) * taper);
 
     const cx = centerX + sway;
@@ -408,7 +420,7 @@ function drawModernBottle(
 
     // 休憩中の稼働時は、ボトル口元から現在の液面まで連続ストリームを接続して注ぎ込む
     if (isAnimating && currentRatio < 0.98) {
-      drawContinuousStream(ctx, 16, bottleTop - 1, liquidY + 1.2, time, 1.35, false);
+      drawContinuousStream(ctx, 16, bottleTop - 1, liquidY + 1.2, time, 1.35, 'top');
     }
 
     // 液面の柔らかな波打ち
@@ -503,12 +515,12 @@ function renderIconInSW(
   if (inverted) {
     // 集中フェーズ（Focus）:
     // ボトルを反転して上寄せ配置し、ノズル先端から下端へ途切れないストリームを流す
-    const bottleScale = isAnimating ? 0.74 : 0.94;
-    const nozzleWorldY = isAnimating ? 22.0 : 28.8;
+    const bottleScale = isAnimating ? 0.78 : 0.96;
+    const nozzleWorldY = isAnimating ? 22.0 : 28.6;
 
     // 稼働中は先に連続ストリームを描画し、ノズル先端と自然に接続させる
     if (isAnimating) {
-      drawContinuousStream(ctx, 16, nozzleWorldY - 0.8, 32, time, 1.9, true);
+      drawContinuousStream(ctx, 16, nozzleWorldY - 0.8, 32, time, 1.9, 'top');
     }
 
     ctx.save();
@@ -528,7 +540,7 @@ function renderIconInSW(
 
     if (isAnimating && ratio < 0.98) {
       // 画面上端からボトルのノズル口元へ連続して注ぎ込むストリーム
-      drawContinuousStream(ctx, 16, 0, nozzleWorldY + 1.2, time, 1.75, false);
+      drawContinuousStream(ctx, 16, 0, nozzleWorldY + 1.2, time, 1.75, 'bottom');
     }
 
     ctx.save();
